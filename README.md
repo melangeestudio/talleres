@@ -70,6 +70,18 @@ Para cambiar el backend (correos, Calendar, duración de eventos, personas máxi
 - **Datos:** Sheet y carpeta de comprobantes privados (sin enlaces públicos). El script corre con la cuenta del estudio: activar verificación en dos pasos en esa cuenta de Google.
 - **Navegador:** Content-Security-Policy en `index.html` y `admin.html` (solo scripts propios y conexión a Apps Script).
 
+## Preguntas frecuentes (FAQ)
+
+Están al final de `index.html`, en `<section class="faq">`: cada pregunta es un `<details class="faq-item">` con su `<summary>` (pregunta) y un `<div class="faq-resp">` (respuesta). Para editar, cambiar el texto; para agregar, copiar un bloque `<details>` completo; para quitar, borrarlo. Es un acordeón nativo (sin JavaScript). Si se cambia el CSS o JS, subir el número de `?v=` en los enlaces de `index.html` y `admin.html` para evitar caché.
+
+## Respaldo y limpieza
+
+Se ejecutan a mano desde el editor de Apps Script (no requieren nuevo despliegue):
+
+- `respaldarHoja()`: copia completa del Sheet en la carpeta de Drive "Respaldos - Talleres Melange".
+- `activarRespaldoSemanal()` / `desactivarRespaldoSemanal()`: respaldo automático cada lunes a las 3 am.
+- `limpiarTodo()`: hace un respaldo y borra actividades, inscripciones y solicitudes (conserva encabezados), sus eventos de Calendar y manda a la papelera los comprobantes. No toca `Configuracion` ni usuarios. Para ejecutarla hay que cambiar `CONFIRMAR = false` a `true` dentro de la función.
+
 ## Publicación
 
 1. Subir el contenido de este repo a la rama `main`.
