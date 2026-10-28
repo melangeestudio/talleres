@@ -155,6 +155,8 @@
     try {
       await cargarActividades();
       if (tabActual === 'inscritos' && !$('sel-actividad').value) await cargarInscritos();
+      if (tabActual === 'solicitudes') await cargarSolicitudes();
+      else cargarSolicitudes(true);
       toast('Datos actualizados');
     } finally {
       recargando = false;
@@ -170,6 +172,7 @@
     chip.textContent = usuarioActual;
     chip.hidden = !usuarioActual;
     cambiarTab('actividades');
+    cargarSolicitudes(true); // solo para mostrar el contador de pendientes
     await cargarActividades();
   }
 
@@ -178,8 +181,10 @@
     tabActual = t;
     $('tab-actividades').hidden = t !== 'actividades';
     $('tab-inscritos').hidden = t !== 'inscritos';
+    $('tab-solicitudes').hidden = t !== 'solicitudes';
     document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('activo', b.dataset.tab === t));
     if (t === 'inscritos') cargarInscritos();
+    if (t === 'solicitudes') cargarSolicitudes();
   }
 
   document.querySelector('.tabs').addEventListener('click', (e) => {
@@ -191,7 +196,7 @@
   async function cargarActividades() {
     setEstado('Cargando…');
     try {
-      const data = await getApi('listarActividades');
+      const data = await api('listarActividadesAdmin');
       if (!Array.isArray(data)) throw new Error((data && data.error) || 'Respuesta inesperada');
       actividades = data.sort((a, b) =>
         (a.fechaISO + hora24(a.hora)).localeCompare(b.fechaISO + hora24(b.hora)));
@@ -219,15 +224,18 @@
       const ocupados = total - Number(a.cuposDisponibles);
       const pasada = a.fechaISO < hoy;
       const id = esc(a.id);
+      const etiqueta = a.categoria === 'Miércoles' ? '<span class="badge mie">Miércoles</span>'
+        : a.categoria === 'Privado' ? '<span class="badge priv">Privado</span>' : '';
+      const editable = !a.categoria; // miércoles y privados se ajustan desde Configuracion / Solicitudes
       return `
         <tr class="${pasada ? 'pasada' : ''}">
           <td>${esc(formatFecha(a))}<br><small>${esc(formatHora(a.hora))}${pasada ? '<span class="badge">Pasada</span>' : ''}</small></td>
-          <td>${esc(nombreVisible(a.nombre))}</td>
-          <td>${ocupados} / ${total}</td>
+          <td>${esc(nombreVisible(a.nombre))}${etiqueta}</td>
+          <td>${a.categoria === 'Privado' ? esc(personasTxt(ocupados)) : `${ocupados} / ${total}`}</td>
           <td>${esc(MONEDA)}${esc(formatMonto(a.precio))} <small>p/p</small></td>
           <td class="acciones">
             <button type="button" class="btn-mini" data-accion="inscritos" data-id="${id}">Inscritos</button>
-            <button type="button" class="btn-mini" data-accion="editar" data-id="${id}">Editar</button>
+            ${editable ? `<button type="button" class="btn-mini" data-accion="editar" data-id="${id}">Editar</button>` : ''}
             <button type="button" class="btn-mini peligro" data-accion="eliminar" data-id="${id}">Eliminar</button>
           </td>
         </tr>`;
@@ -335,6 +343,7 @@
     cerrarModal();
     cerrarElim();
     cerrarManual();
+    cerrarSol();
   });
   $('f-tipo').addEventListener('change', actualizarNombreInterno);
   $('f-fecha').addEventListener('input', actualizarNombreInterno);
@@ -389,12 +398,136 @@
     }
   });
 
+
+  // ---------- solicitudes de taller privado ----------
+  let solicitudes = [];
+  let solActual = null;
+  let solModo = '';
+  let solEnviando = false;
+
+  function pintarContador() {
+    const n = solicitudes.filter((s) => s.estado === 'Pendiente').length;
+    const c = $('cont-sol');
+    c.textContent = n;
+    c.hidden = n === 0;
+  }
+
+  async function cargarSolicitudes(silencioso) {
+    try {
+      const data = await api('listarSolicitudes');
+      if (!Array.isArray(data)) throw new Error('Respuesta inesperada');
+      solicitudes = data;
+      pintarContador();
+      if (tabActual === 'solicitudes') renderSolicitudes();
+    } catch (err) {
+      if (!silencioso) { mostrarError(err, 'No se pudieron cargar las solicitudes.'); }
+    }
+  }
+
+  function fechaSolicitud(v) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}:\d{2})/.exec(v || '');
+    return m ? `${Number(m[3])} ${MESES[Number(m[2]) - 1].slice(0, 3).toLowerCase()} ${m[1]}, ${formatHora(m[4])}` : '';
+  }
+
+  function renderSolicitudes() {
+    const ver = $('chk-resueltas').checked;
+    const filas = solicitudes.filter((s) => ver || s.estado === 'Pendiente');
+    const tbody = document.querySelector('#tabla-solicitudes tbody');
+    if (!filas.length) {
+      tbody.innerHTML = `<tr><td colspan="6" class="vacio">${ver ? 'No hay solicitudes.' : 'No hay solicitudes pendientes.'}</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = filas.map((s) => {
+      const id = esc(s.id);
+      const pend = s.estado === 'Pendiente';
+      const aviso = pend && s.diaLleno
+        ? '<span class="aviso-dia lleno">Ese día ya tiene 2 talleres: no se puede aprobar</span>'
+        : pend && s.talleresEseDia > 0
+          ? `<span class="aviso-dia">Ese día ya tiene ${s.talleresEseDia} taller${s.talleresEseDia === 1 ? '' : 'es'}</span>` : '';
+      const estado = pend ? '<span class="badge pend">Pendiente</span>'
+        : s.estado === 'Aprobada' ? '<span class="badge ok">Aprobada</span>' : '<span class="badge rech">Rechazada</span>';
+      const resuelta = !pend
+        ? `<br><small>${esc(s.resueltoPor || '')}${s.fechaResolucion ? ' · ' + esc(fechaSolicitud(s.fechaResolucion)) : ''}</small>${s.motivo ? `<br><small>“${esc(s.motivo)}”</small>` : ''}` : '';
+      return `
+        <tr>
+          <td><strong>${esc(formatFecha(s))}</strong> · ${esc(formatHora(s.hora))}<br>
+            <small>Taller de ${esc(String(s.etiqueta).toLowerCase())}${s.fechaSolicitud ? ' · pedido ' + esc(fechaSolicitud(s.fechaSolicitud)) : ''}</small>${aviso ? '<br>' + aviso : ''}</td>
+          <td>${esc(s.personas)}<br><small>${esc(MONEDA)}${esc(formatMonto(s.total))}</small></td>
+          <td>${esc(s.nombre)}<br><small>${esc(s.telefono)}<br>${esc(s.email)}</small></td>
+          <td class="notas">${s.notas ? esc(s.notas) : '<small>—</small>'}</td>
+          <td>${estado}${resuelta}</td>
+          <td class="acciones">${pend ? `
+            <button type="button" class="btn-mini ok" data-accion="aprobar" data-id="${id}" ${s.diaLleno ? 'disabled' : ''}>Aprobar</button>
+            <button type="button" class="btn-mini peligro" data-accion="rechazar" data-id="${id}">Rechazar</button>` : ''}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  $('chk-resueltas').addEventListener('change', renderSolicitudes);
+  document.querySelector('#tabla-solicitudes tbody').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-accion]');
+    if (!b || b.disabled) return;
+    const s = solicitudes.find((x) => String(x.id) === b.dataset.id);
+    if (s) abrirSol(s, b.dataset.accion);
+  });
+
+  function abrirSol(s, modo) {
+    solActual = s; solModo = modo;
+    const aprobar = modo === 'aprobar';
+    $('sol-titulo').textContent = aprobar ? 'Aprobar solicitud' : 'Rechazar solicitud';
+    $('sol-detalle').textContent = `${s.nombre} · Taller de ${String(s.etiqueta).toLowerCase()} · ${formatFecha(s)}, ${formatHora(s.hora)} · ${personasTxt(s.personas)} · ${MONEDA}${formatMonto(s.total)}`;
+    $('sol-label').firstChild.textContent = aprobar ? 'Mensaje para el cliente ' : 'Motivo ';
+    $('sol-texto').value = '';
+    $('sol-hint').textContent = aprobar
+      ? 'Se agrega al calendario y se le envía un correo con el total y los datos de Yappy.'
+      : 'Se le envía un correo amable; si escribes un motivo, va incluido.';
+    $('btn-sol-ok').textContent = aprobar ? 'Aprobar y avisar' : 'Rechazar y avisar';
+    $('btn-sol-ok').classList.toggle('btn-peligro', !aprobar);
+    $('sol-error').hidden = true;
+    $('modal-sol').hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function cerrarSol(forzar) {
+    if (solEnviando && !forzar) return;
+    $('modal-sol').hidden = true;
+    document.body.style.overflow = '';
+  }
+  $('btn-sol-cerrar').addEventListener('click', () => cerrarSol());
+  $('btn-sol-cancelar').addEventListener('click', () => cerrarSol());
+  $('modal-sol').addEventListener('click', (e) => { if (e.target === $('modal-sol')) cerrarSol(); });
+
+  $('form-sol').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    if (solEnviando || !solActual) return;
+    solEnviando = true;
+    const btn = $('btn-sol-ok');
+    const txt = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    $('sol-error').hidden = true;
+    const texto = $('sol-texto').value.trim();
+    try {
+      const r = solModo === 'aprobar'
+        ? await api('aprobarSolicitud', { id: solActual.id, mensaje: texto })
+        : await api('rechazarSolicitud', { id: solActual.id, motivo: texto });
+      cerrarSol(true);
+      const aviso = r.correoEnviado === false ? ' No se pudo enviar el correo: escríbele tú.' : ' Correo enviado.';
+      toast((solModo === 'aprobar' ? 'Solicitud aprobada y agregada al calendario.' : 'Solicitud rechazada.') + aviso, r.correoEnviado === false);
+      await cargarSolicitudes();
+      if (solModo === 'aprobar') await cargarActividades();
+    } catch (err) {
+      if (!err.silent) { $('sol-error').textContent = err.message || 'No se pudo completar.'; $('sol-error').hidden = false; }
+    } finally {
+      solEnviando = false; btn.disabled = false; btn.textContent = txt;
+    }
+  });
+
   // ---------- inscritos ----------
   function renderSelector() {
     const sel = $('sel-actividad');
     const previo = sel.value;
     sel.innerHTML = actividades.map((a) =>
-      `<option value="${esc(a.id)}">${esc(formatFecha(a))} · ${esc(formatHora(a.hora))} · ${esc(nombreVisible(a.nombre))}</option>`
+      `<option value="${esc(a.id)}">${esc(formatFecha(a))} · ${esc(formatHora(a.hora))} · ${esc(nombreVisible(a.nombre))}${a.categoria ? ` (${esc(a.categoria.toLowerCase())})` : ''}</option>`
     ).join('');
     if (previo && actividades.some((a) => String(a.id) === previo)) {
       sel.value = previo;

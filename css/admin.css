@@ -150,3 +150,21 @@ body.admin .wrap { max-width: 1240px; }
 }
 .admin-usuario::before { content: '· '; }
 @media (max-width: 600px) { .admin-usuario { display: none; } }
+
+/* Solicitudes de taller privado */
+.contador {
+  display: inline-block; min-width: 20px; padding: 1px 6px; margin-left: 4px; border-radius: 999px;
+  background: var(--fuego); color: #fff; font-size: .72rem; font-weight: 700; text-align: center; vertical-align: 1px;
+}
+.badge.mie { background: var(--liquen); }
+.badge.priv { background: var(--mochi); }
+.badge.pend { background: var(--luz); border: 1px solid var(--fuego); color: var(--terracota); margin-left: 0; }
+.badge.ok { background: var(--liquen); margin-left: 0; }
+.badge.rech { background: var(--linea); margin-left: 0; }
+.aviso-dia { display: inline-block; margin-top: 4px; font-size: .78rem; color: var(--terracota); font-weight: 600; }
+.aviso-dia.lleno { color: var(--err); }
+#tabla-solicitudes td.notas { max-width: 260px; white-space: pre-wrap; word-break: break-word; }
+#tabla-solicitudes td small { color: var(--suave); }
+.btn-mini.ok { background: var(--azurita); color: var(--luz); border-color: var(--azurita); }
+.btn-mini:disabled { opacity: .4; cursor: not-allowed; }
+@media (max-width: 600px) { .tab { padding: 10px 10px; font-size: .92rem; } .tabs { flex-wrap: wrap; } }

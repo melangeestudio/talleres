@@ -55,6 +55,21 @@
   </header>
 
   <main class="wrap" id="talleres">
+    <section class="opciones" id="opciones" aria-label="Más formas de venir" hidden>
+      <button type="button" class="opcion opcion-mie" id="op-miercoles" hidden>
+        <span class="opcion-mano">todos los miércoles</span>
+        <span class="opcion-titulo">Talleres de miércoles</span>
+        <span class="opcion-texto">Modelado o pintura, elige tu fecha entre los próximos miércoles.</span>
+        <span class="opcion-cta">Ver fechas <span aria-hidden="true">→</span></span>
+      </button>
+      <button type="button" class="opcion opcion-priv" id="op-privado" hidden>
+        <span class="opcion-mano">para tu grupo</span>
+        <span class="opcion-titulo">Taller privado o evento especial</span>
+        <span class="opcion-texto">Cumpleaños, despedidas, equipos: pide la fecha que prefieras y te confirmamos.</span>
+        <span class="opcion-cta">Solicitar fecha <span aria-hidden="true">→</span></span>
+      </button>
+    </section>
+
     <div class="seccion-head">
       <h2 class="section-title">Próximos talleres <span class="section-mano">¡elige el tuyo!</span></h2>
       <div class="vista-toggle" id="vista-toggle" role="group" aria-label="Cambiar vista" hidden>
@@ -105,11 +120,19 @@
       <button type="button" class="modal-cerrar" id="btn-cerrar" aria-label="Cerrar">&times;</button>
 
       <div id="vista-form">
-        <p class="modal-eyebrow">Inscripción</p>
+        <p class="modal-eyebrow" id="modal-eyebrow">Inscripción</p>
         <h3 id="modal-titulo"></h3>
         <p id="modal-resumen" class="resumen"></p>
 
         <form id="form" novalidate>
+          <div id="bloque-miercoles" hidden>
+            <label>Miércoles
+              <select id="f-mie-fecha"></select>
+            </label>
+            <label>Taller
+              <select id="f-mie-tipo"></select>
+            </label>
+          </div>
           <label>Nombre completo
             <input type="text" name="nombre" required maxlength="100" autocomplete="name">
           </label>
@@ -160,8 +183,77 @@
     </div>
   </div>
 
+  <!-- Modal de solicitud de taller privado -->
+  <div id="modal-privado" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="priv-titulo">
+      <button type="button" class="modal-cerrar" id="priv-cerrar" aria-label="Cerrar">&times;</button>
+
+      <div id="priv-form-vista">
+        <p class="modal-eyebrow">Taller privado o evento especial</p>
+        <h3 id="priv-titulo">Pide tu fecha</h3>
+        <p class="resumen">Cuéntanos qué tienes en mente. Revisamos tu solicitud y te escribimos para confirmar; todavía no es una reserva.</p>
+
+        <form id="priv-form" novalidate>
+          <label>Tipo de taller
+            <select name="tipo" id="priv-tipo"></select>
+          </label>
+
+          <div class="campo-cal">
+            <span class="campo-cal-label">Fecha</span>
+            <div class="mini-cal" id="priv-cal"></div>
+            <p class="fecha-elegida" id="priv-fecha-txt">Elige un día disponible</p>
+          </div>
+
+          <label>Hora de inicio
+            <select name="hora" id="priv-hora"></select>
+          </label>
+
+          <label>Número de personas <span class="hint">(máx. <span id="priv-max"></span>)</span>
+            <input type="number" name="personas" id="priv-personas" min="1" step="1" value="6" inputmode="numeric" required>
+          </label>
+          <p class="total-linea" id="priv-total"></p>
+
+          <label>Nombre completo
+            <input type="text" name="nombre" required maxlength="100" autocomplete="name">
+          </label>
+          <label>Teléfono / WhatsApp
+            <input type="tel" name="telefono" required maxlength="30" autocomplete="tel">
+          </label>
+          <label>Correo electrónico
+            <input type="email" name="email" required maxlength="120" autocomplete="email">
+          </label>
+          <label>Notas <span class="hint">(opcional)</span>
+            <textarea name="notas" id="priv-notas" rows="3" maxlength="500" placeholder="¿Celebras algo? ¿Alguna idea o necesidad especial?"></textarea>
+          </label>
+
+          <div class="trampa" aria-hidden="true">
+            <label>Sitio web <input type="text" name="website" id="priv-web" tabindex="-1" autocomplete="off"></label>
+          </div>
+
+          <div class="privacidad">
+            <p class="privacidad-titulo">¿Cómo cuidamos tus datos?</p>
+            <p>Guardamos tu nombre, teléfono y correo solo para responder a tu solicitud y escribirte sobre el taller. Esta información se guarda cifrada en Google y la ve únicamente el equipo de Mélange Estudio; no la vendemos ni la compartimos con otras empresas.</p>
+          </div>
+
+          <p id="priv-error" class="error" role="alert" hidden></p>
+          <button type="submit" id="priv-enviar" class="btn">Enviar solicitud</button>
+        </form>
+      </div>
+
+      <div id="priv-ok-vista" hidden>
+        <span class="sticker ok-mochi" aria-hidden="true"><img src="img/marca/mochi.svg" alt=""></span>
+        <h3 class="ok-titulo">¡Recibimos tu solicitud!</h3>
+        <p id="priv-ok-detalle"></p>
+        <p class="ok-resumen" id="priv-ok-resumen"></p>
+        <p>Te escribiremos al correo que dejaste para confirmar la fecha. Mientras tanto, no necesitas pagar nada.</p>
+        <button type="button" class="btn" id="priv-ok-btn">Listo</button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/config.js"></script>
   <script src="js/common.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/privado.js"></script>
 </body>
 </html>

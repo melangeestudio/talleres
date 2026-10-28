@@ -193,21 +193,115 @@
   function abrirModal(id) {
     seleccionada = actividades.find((a) => String(a.id) === String(id));
     if (!seleccionada) return;
+    $('bloque-miercoles').hidden = true;
+    $('modal-eyebrow').textContent = 'Inscripción';
+    mostrarModal();
+  }
+
+  // Rellena el modal con la actividad `seleccionada` (normal o de miércoles).
+  function llenarModal() {
     $('modal-titulo').textContent = tituloTaller(seleccionada.nombre);
     $('modal-resumen').textContent =
       `${formatFecha(seleccionada)} · ${formatHora(seleccionada.hora)} · ${MONEDA}${formatMonto(seleccionada.precio)} p/p`;
-    $('yappy-num').textContent = YAPPY_NUMERO;
-    $('max-mb').textContent = MAX_ARCHIVO_MB;
-    $('form').reset();
     const disp = Math.max(1, Number(seleccionada.cuposDisponibles) || 1);
     $('f-personas').max = disp;
     $('max-personas').textContent = disp;
+    if (Number($('f-personas').value) > disp) $('f-personas').value = disp;
     actualizarTotal();
+  }
+
+  function mostrarModal() {
+    $('yappy-num').textContent = YAPPY_NUMERO;
+    $('max-mb').textContent = MAX_ARCHIVO_MB;
+    $('form').reset();
+    llenarModal();
     $('form-error').hidden = true;
     $('vista-form').hidden = false;
     $('vista-ok').hidden = true;
     $('modal').hidden = false;
     document.body.style.overflow = 'hidden';
+  }
+
+  // ---------- talleres de miércoles ----------
+  let infoMie = null;
+
+  function opcionTipoTxt(t) {
+    const cupos = t.cuposDisponibles <= 0 ? 'agotado' : t.cuposDisponibles === 1 ? '1 cupo' : `${t.cuposDisponibles} cupos`;
+    return `${t.etiqueta} · ${MONEDA}${formatMonto(t.precio)} p/p · ${cupos}`;
+  }
+
+  function fechaMieTxt(f) {
+    const p = partesFecha(f.fechaISO);
+    return `${p.semana} ${p.dia} de ${MESES[Number(f.fechaISO.slice(5, 7)) - 1].toLowerCase()} · ${formatHora(f.hora)}`;
+  }
+
+  // Rellena el desplegable de taller según el miércoles elegido y actualiza la actividad seleccionada.
+  function elegirMiercoles(conservarTipo) {
+    const f = infoMie.fechas.find((x) => x.fechaISO === $('f-mie-fecha').value);
+    if (!f) return;
+    const previo = conservarTipo ? $('f-mie-tipo').value : '';
+    $('f-mie-tipo').innerHTML = f.tipos.map((t) =>
+      `<option value="${esc(t.tipo)}"${t.cuposDisponibles <= 0 ? ' disabled' : ''}>${esc(opcionTipoTxt(t))}</option>`).join('');
+    const libre = f.tipos.find((t) => t.tipo === previo && t.cuposDisponibles > 0) || f.tipos.find((t) => t.cuposDisponibles > 0);
+    if (libre) $('f-mie-tipo').value = libre.tipo;
+    elegirTipoMiercoles();
+  }
+
+  function elegirTipoMiercoles() {
+    const f = infoMie.fechas.find((x) => x.fechaISO === $('f-mie-fecha').value);
+    const t = f && f.tipos.find((x) => x.tipo === $('f-mie-tipo').value);
+    if (!t) { seleccionada = null; return; }
+    seleccionada = {
+      id: t.id, nombre: (t.tipo === 'modelado' ? 'Hacer' : 'Pintar') + '-Miércoles',
+      fechaISO: f.fechaISO, hora: f.hora, precio: t.precio,
+      cuposDisponibles: t.cuposDisponibles, cuposTotales: t.cuposTotales
+    };
+    llenarModal();
+  }
+
+  async function abrirMiercoles() {
+    const btn = $('op-miercoles');
+    btn.disabled = true;
+    try {
+      infoMie = (await window.Mel.cargarInfo(true)).miercoles;
+    } catch (e) { infoMie = null; }
+    btn.disabled = false;
+    if (!infoMie || !infoMie.fechas.length) return;
+    $('f-mie-fecha').innerHTML = infoMie.fechas.map((f) => {
+      const agotado = f.tipos.every((t) => t.cuposDisponibles <= 0);
+      return `<option value="${esc(f.fechaISO)}"${agotado ? ' disabled' : ''}>${esc(fechaMieTxt(f))}${agotado ? ' · agotado' : ''}</option>`;
+    }).join('');
+    const primera = infoMie.fechas.find((f) => f.tipos.some((t) => t.cuposDisponibles > 0));
+    if (!primera) return;
+    $('f-mie-fecha').value = primera.fechaISO;
+    $('bloque-miercoles').hidden = false;
+    $('modal-eyebrow').textContent = 'Taller de miércoles';
+    $('form').reset();
+    $('f-mie-fecha').value = primera.fechaISO;
+    elegirMiercoles(false);
+    mostrarModalSinReset();
+  }
+
+  function mostrarModalSinReset() {
+    $('yappy-num').textContent = YAPPY_NUMERO;
+    $('max-mb').textContent = MAX_ARCHIVO_MB;
+    $('form-error').hidden = true;
+    $('vista-form').hidden = false;
+    $('vista-ok').hidden = true;
+    $('modal').hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  // Muestra las tarjetas de entrada (miércoles / privado) cuando el backend las ofrece.
+  async function cargarOpciones() {
+    try {
+      const info = await window.Mel.cargarInfo();
+      const mie = info.miercoles && info.miercoles.activo;
+      const priv = info.privado && info.privado.activo;
+      $('op-miercoles').hidden = !mie;
+      $('op-privado').hidden = !priv;
+      $('opciones').hidden = !(mie || priv);
+    } catch (e) { /* sin info no se muestran: el listado normal sigue funcionando */ }
   }
 
   // "2 personas × $45 = $90" y el monto a pagar por Yappy.
@@ -287,6 +381,7 @@
       $('vista-form').hidden = true;
       $('vista-ok').hidden = false;
       cargarActividades(); // refresca cupos
+      window.Mel.cargarInfo(true).then(cargarOpciones).catch(() => {});
     } catch (err) {
       mostrarError(err.message || 'No se pudo completar la inscripción. Intenta de nuevo.');
     } finally {
@@ -330,6 +425,10 @@
   $('modal').addEventListener('click', (e) => { if (e.target === $('modal')) cerrarModal(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrarModal(); });
   $('form').addEventListener('submit', enviar);
+  $('op-miercoles').addEventListener('click', abrirMiercoles);
+  $('f-mie-fecha').addEventListener('change', () => elegirMiercoles(true));
+  $('f-mie-tipo').addEventListener('change', elegirTipoMiercoles);
 
   cargarActividades();
+  cargarOpciones();
 })();

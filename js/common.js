@@ -108,5 +108,15 @@ window.Mel = (function () {
     return res.json();
   }
 
-  return { MESES, esc, hoyISO, nombreVisible, tituloTaller, categoria, partesFecha, formatFecha, hora24, formatHora, formatMonto, personasTxt, postApi, getApi };
+  // Datos de miércoles y talleres privados (hoja Configuracion). Se pide una vez; `forzar` vuelve a pedirlo.
+  let infoPromesa = null;
+  function cargarInfo(forzar) {
+    if (!infoPromesa || forzar) {
+      infoPromesa = getApi('info').then((d) => { if (d.error) throw new Error(d.error); return d; });
+      infoPromesa.catch(() => { infoPromesa = null; });
+    }
+    return infoPromesa;
+  }
+
+  return { cargarInfo, MESES, esc, hoyISO, nombreVisible, tituloTaller, categoria, partesFecha, formatFecha, hora24, formatHora, formatMonto, personasTxt, postApi, getApi };
 })();

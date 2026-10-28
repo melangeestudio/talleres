@@ -13,7 +13,8 @@ css/              styles.css (público) · admin.css (panel)
 js/
   config.js       Configuración: URL de la API, categorías, ubicación, número Yappy
   common.js       Utilidades compartidas
-  app.js          Lógica del sitio público
+  app.js          Lógica del sitio público (lista, calendario, inscripción, miércoles)
+  privado.js      Solicitud de taller privado / evento especial
   admin.js        Lógica del panel
 img/              Marca (logos, ilustraciones, bordes) y logo de Yappy
 fonts/            Bricolage Grotesque, Inter y Schoolbell (autoalojadas, licencias incluidas)
@@ -41,9 +42,18 @@ Para cambiar el backend (correos, Calendar, duración de eventos, personas máxi
 
 ## Datos en el Sheet
 
-**Actividades:** ID · Nombre · Fecha · Hora · Cupos_Totales · Cupos_Disponibles · Precio · Descripcion · ID_Evento
+**Actividades:** ID · Nombre · Fecha · Hora · Cupos_Totales · Cupos_Disponibles · Precio · Descripcion · ID_Evento · Categoria (vacío, `Miércoles` o `Privado`)
 
-**Inscripciones:** ID · ID_Actividad · Nombre · Telefono · Email · Link comprobante · Fecha · Personas · Total · Pagado · Origen
+**Inscripciones:** ID · ID_Actividad · Nombre · Telefono · Email · Link comprobante · Fecha · Personas · Total · Pagado · Origen (`Manual`, `Privado` o vacío)
+
+**Configuracion** (Clave · Valor · Nota) y **Solicitudes** se crean al ejecutar `prepararHojas()` una vez en el editor de Apps Script.
+
+## Talleres de miércoles y talleres privados
+
+- **Miércoles:** el sitio siempre ofrece los próximos 8 miércoles, con modelado y pintura (cada uno con su precio y cupos). La actividad se crea sola con la primera inscripción y no aparece en la lista general. Para cerrar un miércoles, anotar su fecha en `miercoles_cerrados` (formato `2026-11-11, 2026-12-02`).
+- **Privados:** el cliente pide fecha, hora, tipo y personas. Llega un correo al estudio y la solicitud aparece en el panel, pestaña **Solicitudes privadas**. Al **aprobar**: se crea la actividad y el evento en Calendar, y el cliente recibe un correo con el total y los datos de Yappy. Al **rechazar**: correo amable con motivo opcional.
+- **Límite por día:** un día con 2 talleres (de cualquier tipo) no se ofrece ni se puede aprobar (`privado_max_talleres_dia`). Los miércoles cuentan una vez que alguien se inscribe.
+- **Editar valores:** hora, cupos, precios, horario de privados, anticipación y meses máximos están en la pestaña **Configuracion** del Sheet; los cambios aplican de inmediato.
 
 ## Seguridad
 

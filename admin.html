@@ -54,6 +54,7 @@
       <nav class="tabs" role="tablist">
         <button type="button" class="tab activo" data-tab="actividades" role="tab">Actividades</button>
         <button type="button" class="tab" data-tab="inscritos" role="tab">Inscritos</button>
+        <button type="button" class="tab" data-tab="solicitudes" role="tab">Solicitudes privadas <span class="contador" id="cont-sol" hidden></span></button>
       </nav>
 
       <div id="estado" class="estado" role="status" hidden></div>
@@ -87,6 +88,21 @@
           <table class="tabla" id="tabla-inscritos">
             <thead>
               <tr><th>Nombre</th><th>Personas</th><th>Total</th><th>Teléfono</th><th>Correo</th><th>Inscrito</th><th>Pago</th><th>Comprobante</th><th></th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Solicitudes de taller privado -->
+      <section id="tab-solicitudes" hidden>
+        <div class="barra">
+          <label class="check"><input type="checkbox" id="chk-resueltas"> Mostrar aprobadas y rechazadas</label>
+        </div>
+        <div class="tabla-wrap">
+          <table class="tabla" id="tabla-solicitudes">
+            <thead>
+              <tr><th>Taller solicitado</th><th>Personas</th><th>Contacto</th><th>Notas</th><th>Estado</th><th></th></tr>
             </thead>
             <tbody></tbody>
           </table>
@@ -188,6 +204,26 @@
         <p class="hint" id="manual-hint"></p>
         <p id="manual-error" class="error" role="alert" hidden></p>
         <button type="submit" id="btn-manual-ok" class="btn">Agregar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal aprobar / rechazar solicitud de taller privado -->
+  <div id="modal-sol" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="sol-titulo">
+      <button type="button" class="modal-cerrar" id="btn-sol-cerrar" aria-label="Cerrar">&times;</button>
+      <h3 id="sol-titulo">Aprobar solicitud</h3>
+      <p id="sol-detalle" class="resumen"></p>
+      <form id="form-sol" novalidate>
+        <label id="sol-label">Mensaje para el cliente <span class="hint">(opcional)</span>
+          <textarea id="sol-texto" rows="3" maxlength="500"></textarea>
+        </label>
+        <p class="hint" id="sol-hint"></p>
+        <p id="sol-error" class="error" role="alert" hidden></p>
+        <div class="botones-fila">
+          <button type="button" class="btn-sec" id="btn-sol-cancelar">Cancelar</button>
+          <button type="submit" class="btn" id="btn-sol-ok">Aprobar</button>
+        </div>
       </form>
     </div>
   </div>
