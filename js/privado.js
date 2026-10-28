@@ -175,6 +175,7 @@
 
   $('op-privado').addEventListener('click', abrir);
   $('priv-cerrar').addEventListener('click', cerrar);
+  $('priv-cancelar').addEventListener('click', cerrar);
   $('priv-ok-btn').addEventListener('click', cerrar);
   $('modal-privado').addEventListener('click', (e) => { if (e.target === $('modal-privado')) cerrar(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('modal-privado').hidden) cerrar(); });

@@ -423,6 +423,7 @@
   });
   mq.addEventListener('change', render);
   $('btn-cerrar').addEventListener('click', cerrarModal);
+  $('btn-cancelar').addEventListener('click', cerrarModal);
   $('btn-ok').addEventListener('click', cerrarModal);
   $('modal').addEventListener('click', (e) => { if (e.target === $('modal')) cerrarModal(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrarModal(); });
