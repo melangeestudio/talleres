@@ -636,3 +636,16 @@ form textarea { resize: vertical; min-height: 70px; }
 .faq-resp p { margin: 0 0 10px; }
 .faq-resp p:last-child { margin-bottom: 0; }
 @media (max-width: 600px) { .faq { margin-top: 40px; } .faq-item summary { padding: 14px 16px; font-size: 1rem; } .faq-resp { padding: 0 16px 14px; } }
+
+/* ---------- Modales en móvil: el botón de cerrar siempre a la vista ---------- */
+.modal-card { max-height: 92vh; max-height: 92dvh; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.modal-cerrar {
+  position: sticky; top: 6px; z-index: 5;
+  display: block; margin: -16px -8px -36px auto; right: auto;
+  background: var(--papel); border-color: var(--azurita);
+}
+@media (max-width: 600px) {
+  .modal { align-items: flex-end; padding: 8px 8px 0; }
+  .modal-card { max-height: 94vh; max-height: 94dvh; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+  .modal-cerrar { width: 40px; height: 40px; }
+}
