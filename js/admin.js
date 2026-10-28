@@ -453,7 +453,7 @@
           <td><strong>${esc(formatFecha(s))}</strong> · ${esc(formatHora(s.hora))}<br>
             <small>Taller de ${esc(String(s.etiqueta).toLowerCase())}${s.fechaSolicitud ? ' · pedido ' + esc(fechaSolicitud(s.fechaSolicitud)) : ''}</small>${aviso ? '<br>' + aviso : ''}</td>
           <td>${esc(s.personas)}<br><small>${esc(MONEDA)}${esc(formatMonto(s.total))}</small></td>
-          <td>${esc(s.nombre)}<br><small>${esc(s.telefono)}<br>${esc(s.email)}</small></td>
+          <td>${esc(s.nombre)}<br><small>${esc(s.telefono)}<br>${esc(s.email)}${s.instagram ? '<br>' + esc(s.instagram) : ''}</small></td>
           <td class="notas">${s.notas ? esc(s.notas) : '<small>—</small>'}</td>
           <td>${estado}${resuelta}</td>
           <td class="acciones">${pend ? `
@@ -670,6 +670,7 @@
       $('m-nombre').value = editandoInsc.nombre || '';
       $('m-telefono').value = editandoInsc.telefono || '';
       $('m-email').value = editandoInsc.email || '';
+      $('m-instagram').value = editandoInsc.instagram || '';
     } else {
       $('m-personas').max = Math.max(Number(a.cuposDisponibles), 1);
       actualizarManual();
@@ -709,6 +710,7 @@
     const nombre = $('m-nombre').value.trim();
     const telefono = $('m-telefono').value.trim();
     const email = $('m-email').value.trim();
+    const instagram = $('m-instagram').value.trim();
     const err = (m) => { $('manual-error').textContent = m; $('manual-error').hidden = false; };
     if (!nombre) return err('Escribe el nombre.');
     if (email && !EMAIL_RE.test(email)) return err('El correo no parece válido.');
@@ -717,7 +719,7 @@
     let accion, datos, mensaje;
     if (edicion) {
       accion = 'editarInscripcion';
-      datos = { id: edicion.id, nombre, telefono, email };
+      datos = { id: edicion.id, nombre, telefono, email, instagram };
       mensaje = 'Cambios guardados';
     } else {
       const personas = Number($('m-personas').value);
@@ -725,7 +727,7 @@
       if (!Number.isInteger(personas) || personas < 1) return err('Indica cuántas personas son.');
       if (personas > Number(a.cuposDisponibles)) return err(`Solo quedan ${a.cuposDisponibles} cupos.`);
       accion = 'agregarInscripcion';
-      datos = { idActividad: a.id, nombre, telefono, email, personas, pagado: $('m-pagado').value === 'si',
+      datos = { idActividad: a.id, nombre, telefono, email, instagram, personas, pagado: $('m-pagado').value === 'si',
         enviarCorreo: $('m-enviar').checked };
       mensaje = `${nombre} agregado/a`;
     }
@@ -825,7 +827,7 @@
           <td>${esc(Number(i.personas) || 1)}</td>
           <td>${i.total === '' || i.total == null ? '' : esc(MONEDA + formatMonto(i.total))}</td>
           <td>${i.telefono ? `<a href="tel:${esc(String(i.telefono).replace(/[^\d+]/g, ''))}">${esc(i.telefono)}</a>` : '<span class="hint">—</span>'}</td>
-          <td>${i.email ? `<a href="mailto:${esc(i.email)}">${esc(i.email)}</a>` : '<span class="hint">—</span>'}</td>
+          <td>${i.email ? `<a href="mailto:${esc(i.email)}">${esc(i.email)}</a>` : '<span class="hint">—</span>'}${i.instagram ? `<br><small class="ig">${esc(i.instagram)}</small>` : ''}</td>
           <td>${esc(fechaInscripcion(i.fechaInscripcion))}</td>
           <td>${(() => { const p = estadoPago(i); return `<button type="button" class="pago-btn ${p.cls}" data-accion="pago" data-id="${esc(i.id)}" title="Clic para cambiar entre pagado y pendiente">${esc(p.txt)}</button>`; })()}</td>
           <td>${i.origen === 'Manual' ? '<span class="hint">—</span>' : enlaceComprobante(i.linkComprobante)}</td>

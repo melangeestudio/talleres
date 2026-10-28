@@ -53,6 +53,8 @@ Para cambiar el backend (correos, Calendar, duración de eventos, personas máxi
 - **Miércoles:** el sitio siempre ofrece los próximos 8 miércoles, con modelado y pintura (cada uno con su precio y cupos). La actividad se crea sola con la primera inscripción y no aparece en la lista general. Para cerrar un miércoles, anotar su fecha en `miercoles_cerrados` (formato `2026-11-11, 2026-12-02`).
 - **Privados:** el cliente pide fecha, hora, tipo y personas. Llega un correo al estudio y la solicitud aparece en el panel, pestaña **Solicitudes privadas**. Al **aprobar**: se crea la actividad y el evento en Calendar, y el cliente recibe un correo con el total y los datos de Yappy. Al **rechazar**: correo amable con motivo opcional.
 - **Límite por día:** un día con 2 talleres (de cualquier tipo) no se ofrece ni se puede aprobar (`privado_max_talleres_dia`). Los miércoles cuentan una vez que alguien se inscribe.
+- **Horarios de privados:** lunes a viernes desde las 5:30 p. m. y sábado/domingo desde las 10:00 a. m.; cierre 9:30 p. m. La última hora de inicio es el cierre menos la duración del evento (`DURACION_HORAS_EVENTO`, 2 h en `Codigo.gs`). Máximo 16 personas (`privado_max_personas`).
+- **Instagram:** campo opcional en todos los formularios (inscripción, privado y alta manual). Se guarda como `@usuario` (columna `Instagram` en Inscripciones y Solicitudes).
 - **Editar valores:** hora, cupos, precios, horario de privados, anticipación y meses máximos están en la pestaña **Configuracion** del Sheet; los cambios aplican de inmediato.
 
 ## Seguridad

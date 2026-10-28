@@ -591,3 +591,5 @@ form textarea { resize: vertical; min-height: 70px; }
 
 .hero .lead .lead-link { color: var(--luz); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .hero .lead .lead-link:hover { color: var(--liquen); }
+
+.hint-hora { margin: -8px 0 14px; font-size: .84rem; }

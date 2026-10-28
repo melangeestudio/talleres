@@ -11,7 +11,7 @@
   <link rel="icon" href="img/marca/tacita.svg" type="image/svg+xml">
   <link rel="preload" href="fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/schoolbell.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/styles.css?v=3">
+  <link rel="stylesheet" href="css/styles.css?v=4">
 </head>
 <body>
   <!-- Íconos reutilizables -->
@@ -141,6 +141,9 @@
           <label>Correo electrónico
             <input type="email" name="email" required maxlength="120" autocomplete="email">
           </label>
+          <label>Usuario de Instagram <span class="hint">(opcional)</span>
+            <input type="text" name="instagram" id="f-ig" maxlength="40" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@tuusuario">
+          </label>
 
           <label>Número de personas <span class="hint">(máx. <span id="max-personas"></span>)</span>
             <input type="number" name="personas" id="f-personas" min="1" step="1" value="1" inputmode="numeric" required>
@@ -204,8 +207,9 @@
           </div>
 
           <label>Hora de inicio
-            <select name="hora" id="priv-hora"></select>
+            <select name="hora" id="priv-hora" disabled></select>
           </label>
+          <p class="hint hint-hora" id="priv-hora-hint">Elige primero la fecha para ver los horarios.</p>
 
           <label>Número de personas <span class="hint">(máx. <span id="priv-max"></span>)</span>
             <input type="number" name="personas" id="priv-personas" min="1" step="1" value="6" inputmode="numeric" required>
@@ -220,6 +224,9 @@
           </label>
           <label>Correo electrónico
             <input type="email" name="email" required maxlength="120" autocomplete="email">
+          </label>
+          <label>Usuario de Instagram <span class="hint">(opcional)</span>
+            <input type="text" name="instagram" id="priv-ig" maxlength="40" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@tuusuario">
           </label>
           <label>Notas <span class="hint">(opcional)</span>
             <textarea name="notas" id="priv-notas" rows="3" maxlength="500" placeholder="¿Celebras algo? ¿Alguna idea o necesidad especial?"></textarea>
@@ -250,9 +257,9 @@
     </div>
   </div>
 
-  <script src="js/config.js?v=3"></script>
-  <script src="js/common.js?v=3"></script>
-  <script src="js/app.js?v=3"></script>
-  <script src="js/privado.js?v=3"></script>
+  <script src="js/config.js?v=4"></script>
+  <script src="js/common.js?v=4"></script>
+  <script src="js/app.js?v=4"></script>
+  <script src="js/privado.js?v=4"></script>
 </body>
 </html>

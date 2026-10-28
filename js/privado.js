@@ -48,9 +48,31 @@
     $('priv-fecha-txt').classList.toggle('elegida', !!fechaSel);
   }
 
-  function opcionesHora() {
-    const [h0, m0] = info.horaInicio.split(':').map(Number);
-    const [h1, m1] = info.horaFin.split(':').map(Number);
+  // Entre semana y fines de semana (sáb/dom) tienen horarios distintos.
+  function rangoDe(f) {
+    const d = new Date(Number(f.slice(0, 4)), Number(f.slice(5, 7)) - 1, Number(f.slice(8, 10))).getDay();
+    return (d === 0 || d === 6) ? info.horarios.finde : info.horarios.semana;
+  }
+
+  function llenarHoras() {
+    const sel = $('priv-hora');
+    if (!fechaSel) {
+      sel.innerHTML = ''; sel.disabled = true;
+      $('priv-hora-hint').textContent = 'Elige primero la fecha para ver los horarios.';
+      return;
+    }
+    const previa = sel.value;
+    const r = rangoDe(fechaSel);
+    sel.innerHTML = opcionesHora(r);
+    sel.disabled = false;
+    if (previa && sel.querySelector(`option[value="${previa}"]`)) sel.value = previa;
+    else if (sel.querySelector('option[value="15:00"]') && r.inicio <= '15:00') sel.value = '15:00';
+    $('priv-hora-hint').textContent = `Ese día puedes empezar entre las ${formatHora(r.inicio)} y las ${formatHora(r.fin)}. Cerramos a las ${formatHora(info.horaCierre)}`;
+  }
+
+  function opcionesHora(r) {
+    const [h0, m0] = r.inicio.split(':').map(Number);
+    const [h1, m1] = r.fin.split(':').map(Number);
     const out = [];
     for (let t = h0 * 60 + m0; t <= h1 * 60 + m1; t += 30) {
       const v = `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
@@ -77,8 +99,7 @@
     mesCal = mesIdx(info.minFecha);
     $('priv-tipo').innerHTML = Object.keys(ETIQUETA).map((t) =>
       `<option value="${t}">${ETIQUETA[t]} · ${MONEDA}${formatMonto(info.precios[t])} p/p</option>`).join('');
-    $('priv-hora').innerHTML = opcionesHora();
-    if ($('priv-hora').querySelector('option[value="15:00"]')) $('priv-hora').value = '15:00';
+    llenarHoras();
     $('priv-personas').max = info.maxPersonas;
     $('priv-max').textContent = info.maxPersonas;
     renderCal();
@@ -107,9 +128,10 @@
       tipo: f.tipo.value, fecha: fechaSel, hora: f.hora.value,
       personas: Number(f.personas.value),
       nombre: f.nombre.value.trim(), telefono: f.telefono.value.trim(), email: f.email.value.trim(),
-      notas: f.notas.value.trim(), web: $('priv-web').value
+      notas: f.notas.value.trim(), instagram: $('priv-ig').value.trim(), web: $('priv-web').value
     };
     if (!datos.fecha) return error('Elige un día en el calendario.');
+    if (!datos.hora) return error('Elige la hora de inicio.');
     if (!Number.isInteger(datos.personas) || datos.personas < 1) return error('Indica cuántas personas serán.');
     if (datos.personas > info.maxPersonas) return error(`El máximo es ${info.maxPersonas} personas.`);
     if (!datos.nombre || !datos.telefono || !datos.email) return error('Completa tus datos de contacto.');
@@ -147,6 +169,6 @@
     const nav = e.target.closest('button[data-nav]');
     if (nav && !nav.disabled) { mesCal += Number(nav.dataset.nav); renderCal(); return; }
     const d = e.target.closest('button[data-f]');
-    if (d && !d.disabled) { fechaSel = d.dataset.f; renderCal(); }
+    if (d && !d.disabled) { fechaSel = d.dataset.f; renderCal(); llenarHoras(); }
   });
 })();

@@ -363,7 +363,7 @@
       const resp = await postApi({
         action: 'inscribir',
         idActividad: seleccionada.id,
-        nombre, telefono, email, personas,
+        nombre, telefono, email, personas, instagram: $('f-ig').value.trim(),
         web: $('f-web').value,   // campo trampa: vacío para personas
         comprobanteBase64: base64,
         comprobanteTipo: archivo.type || 'application/octet-stream'
