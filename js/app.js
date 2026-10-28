@@ -297,9 +297,6 @@
   }
 
   // ---------- eventos ----------
-  const correoPriv = $('priv-correo');
-  correoPriv.textContent = window.CONFIG.CONTACTO_EMAIL;
-  correoPriv.href = 'mailto:' + window.CONFIG.CONTACTO_EMAIL;
   $('anio').textContent = new Date().getFullYear();
   $('f-personas').addEventListener('input', () => { if (seleccionada) actualizarTotal(); });
   document.querySelectorAll('.ubicacion').forEach((a) => {
