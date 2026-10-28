@@ -589,5 +589,5 @@ form textarea { resize: vertical; min-height: 70px; }
 #priv-ok-vista #priv-ok-detalle { color: var(--tinta); }
 #priv-ok-vista .ok-resumen { color: var(--azurita); font-weight: 700; }
 
-.lead-link { color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
-.lead-link:hover { color: var(--luz); }
+.hero .lead .lead-link { color: var(--luz); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.hero .lead .lead-link:hover { color: var(--liquen); }
