@@ -103,7 +103,8 @@
   async function abrir() {
     const btn = $('op-privado');
     btn.disabled = true;
-    try { info = (await window.Mel.cargarInfo(true)).privado; } catch (e) { info = null; }
+    try { info = (await window.Mel.cargarInfo()).privado; } catch (e) { info = null; } // ya precargada al abrir la página
+    window.Mel.cargarInfo(true).catch(() => {}); // refresca en segundo plano para la próxima vez
     btn.disabled = false;
     if (!info || !info.activo) return;
     $('priv-form').reset();

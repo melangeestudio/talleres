@@ -264,8 +264,9 @@
     const btn = $('op-miercoles');
     btn.disabled = true;
     try {
-      infoMie = (await window.Mel.cargarInfo(true)).miercoles;
+      infoMie = (await window.Mel.cargarInfo()).miercoles; // ya precargada al abrir la página
     } catch (e) { infoMie = null; }
+    window.Mel.cargarInfo(true).catch(() => {}); // refresca en segundo plano para la próxima vez
     btn.disabled = false;
     if (!infoMie || !infoMie.fechas.length) return;
     $('f-mie-fecha').innerHTML = infoMie.fechas.map((f) => {
