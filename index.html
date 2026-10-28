@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mélange Estudio · Talleres de cerámica</title>
+  <meta name="description" content="Talleres de cerámica en Mélange Estudio, Vía Argentina. Mira el calendario, reserva tu cupo y paga por Yappy.">
+  <meta name="theme-color" content="#2A59D1">
+  <link rel="icon" href="img/marca/tacita.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/schoolbell.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Íconos reutilizables -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="ico-pin" viewBox="0 0 24 24">
+      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+    </symbol>
+    <symbol id="ico-ig" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M7.5 3.2h9a4.3 4.3 0 0 1 4.3 4.3v9a4.3 4.3 0 0 1-4.3 4.3h-9a4.3 4.3 0 0 1-4.3-4.3v-9a4.3 4.3 0 0 1 4.3-4.3z"/>
+      <circle cx="12" cy="12" r="4.1" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="17.3" cy="6.8" r="1.2" fill="currentColor"/>
+    </symbol>
+  </svg>
+
+  <header class="hero">
+    <nav class="hero-top">
+      <a class="marca" href="./" aria-label="Mélange Estudio, inicio">
+        <img class="marca-tacita" src="img/marca/tacita-luz.svg" alt="" width="46" height="32">
+        <span class="marca-nombre">Mélange</span>
+        <span class="marca-estudio">estudio</span>
+      </a>
+      <a class="hero-ig" href="https://www.instagram.com/melange_estudio/" target="_blank" rel="noopener noreferrer">
+        <svg aria-hidden="true"><use href="#ico-ig"/></svg><span>@melange_estudio</span>
+      </a>
+    </nav>
+
+    <div class="hero-cuerpo">
+      <div class="hero-texto">
+        <h1>Talleres de<br>cerámica</h1>
+        <p class="hero-mano">hechos con las manos y el amor.</p>
+        <p class="lead">Elige tu taller, reserva tu cupo y paga por Yappy. Sin crear cuenta.</p>
+        <a class="hero-flecha" href="#talleres">mira lo que viene <span aria-hidden="true">↓</span></a>
+      </div>
+      <div class="hero-collage" aria-hidden="true">
+        <img class="c-estrella" src="img/marca/estrella.svg" alt="">
+        <img class="c-flor" src="img/marca/flor.svg" alt="">
+        <img class="c-taza" src="img/marca/taza-cuadros.svg" alt="">
+        <span class="sticker c-mochi"><img src="img/marca/mochi.svg" alt=""></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" id="talleres">
+    <div class="seccion-head">
+      <h2 class="section-title">Próximos talleres <span class="section-mano">¡elige el tuyo!</span></h2>
+      <div class="vista-toggle" id="vista-toggle" role="group" aria-label="Cambiar vista" hidden>
+        <button type="button" class="toggle-btn activo" data-vista="lista" aria-pressed="true">Lista</button>
+        <button type="button" class="toggle-btn" data-vista="calendario" aria-pressed="false">Calendario</button>
+      </div>
+    </div>
+    <div id="estado" class="estado" role="status">Cargando talleres…</div>
+    <div id="lista"></div>
+    <div id="calendario" class="calendario" hidden></div>
+
+    <section class="pasos" aria-labelledby="pasos-titulo">
+      <h2 id="pasos-titulo" class="pasos-titulo">¿Cómo me inscribo?</h2>
+      <ol>
+        <li><span class="paso-n">1</span><p><strong>Elige un taller</strong> y cuántas personas vienen.</p></li>
+        <li><span class="paso-n">2</span><p><strong>Paga por Yappy</strong> el total que te mostramos.</p></li>
+        <li><span class="paso-n">3</span><p><strong>Sube tu comprobante</strong> y listo: tu cupo queda reservado.</p></li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="sticker f-wolfi" aria-hidden="true"><img src="img/marca/wolfi.svg" alt=""></span>
+    <div class="footer-grid">
+      <div class="footer-marca">
+        <span class="marca marca-claro">
+          <img class="marca-tacita" src="img/marca/tacita-luz.svg" alt="" width="46" height="32">
+          <span class="marca-nombre">Mélange</span>
+          <span class="marca-estudio">estudio</span>
+        </span>
+        <p class="footer-mano">no buscamos uniformidad, sino alma.</p>
+      </div>
+      <div class="footer-datos">
+        <p class="footer-etiqueta">Dónde estamos</p>
+        <a class="ubicacion" target="_blank" rel="noopener noreferrer" title="Ver en Google Maps"></a>
+        <p class="footer-etiqueta">Síguenos</p>
+        <a class="ig-link" href="https://www.instagram.com/melange_estudio/" target="_blank" rel="noopener noreferrer">
+          <svg aria-hidden="true"><use href="#ico-ig"/></svg><span>@melange_estudio</span>
+        </a>
+      </div>
+    </div>
+    <p class="footer-legal">© <span id="anio"></span> Mélange Estudio · Panamá</p>
+  </footer>
+
+  <!-- Modal de inscripción -->
+  <div id="modal" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+      <button type="button" class="modal-cerrar" id="btn-cerrar" aria-label="Cerrar">&times;</button>
+
+      <div id="vista-form">
+        <p class="modal-eyebrow">Inscripción</p>
+        <h3 id="modal-titulo"></h3>
+        <p id="modal-resumen" class="resumen"></p>
+
+        <form id="form" novalidate>
+          <label>Nombre completo
+            <input type="text" name="nombre" required maxlength="100" autocomplete="name">
+          </label>
+          <label>Teléfono / WhatsApp
+            <input type="tel" name="telefono" required maxlength="30" autocomplete="tel">
+          </label>
+          <label>Correo electrónico
+            <input type="email" name="email" required maxlength="120" autocomplete="email">
+          </label>
+
+          <label>Número de personas <span class="hint">(máx. <span id="max-personas"></span>)</span>
+            <input type="number" name="personas" id="f-personas" min="1" step="1" value="1" inputmode="numeric" required>
+          </label>
+          <p class="total-linea" id="total-linea"></p>
+
+          <div class="pago">
+            <img src="img/yappy.svg" alt="Yappy" class="yappy-logo" onerror="this.style.display='none'">
+            <p>Paga <strong id="pago-total"></strong> por <strong>Yappy</strong> al <strong id="yappy-num"></strong> y adjunta aquí tu comprobante.</p>
+          </div>
+
+          <label>Comprobante de pago <span class="hint">(foto o PDF, máx. <span id="max-mb"></span> MB)</span>
+            <input type="file" name="comprobante" id="comprobante" accept="image/*,application/pdf" required>
+          </label>
+
+          <p id="form-error" class="error" role="alert" hidden></p>
+          <button type="submit" id="btn-enviar" class="btn">Confirmar inscripción</button>
+        </form>
+      </div>
+
+      <div id="vista-ok" hidden>
+        <span class="sticker ok-mochi" aria-hidden="true"><img src="img/marca/mochi.svg" alt=""></span>
+        <h3 class="ok-titulo">¡Te esperamos!</h3>
+        <p id="ok-detalle"></p>
+        <p id="ok-resumen" class="ok-resumen"></p>
+        <a class="ubicacion ubicacion-ok" target="_blank" rel="noopener noreferrer" title="Ver en Google Maps"></a>
+        <p>Revisaremos tu comprobante y nos pondremos en contacto contigo si hace falta algo.</p>
+        <button type="button" class="btn" id="btn-ok">Listo</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
