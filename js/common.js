@@ -118,5 +118,18 @@ window.Mel = (function () {
     return infoPromesa;
   }
 
-  return { cargarInfo, MESES, esc, hoyISO, nombreVisible, tituloTaller, categoria, partesFecha, formatFecha, hora24, formatHora, formatMonto, personasTxt, postApi, getApi };
+  // Tarjeta explicativa de un tipo de taller (usa CONFIG.TIPOS_INFO).
+  function tipoInfoHTML(tipo, precio) {
+    const t = (window.CONFIG.TIPOS_INFO || {})[tipo];
+    if (!t) return '';
+    return `<div class="tipo-card tipo-${esc(tipo)}">
+      <img class="tipo-ilus" src="img/marca/${esc(t.ilustracion)}.svg" alt="" width="46" height="54">
+      <div class="tipo-cuerpo">
+        <h4>${esc(t.titulo)}${precio !== undefined && precio !== '' ? ` <span class="tipo-precio">${esc(window.CONFIG.MONEDA)}${esc(formatMonto(precio))} p/p</span>` : ''}</h4>
+        <p>${esc(t.texto)}</p>
+        <ul>${t.puntos.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>
+      </div></div>`;
+  }
+
+  return { tipoInfoHTML, cargarInfo, MESES, esc, hoyISO, nombreVisible, tituloTaller, categoria, partesFecha, formatFecha, hora24, formatHora, formatMonto, personasTxt, postApi, getApi };
 })();

@@ -9,8 +9,8 @@
   <title>Panel · Mélange Estudio</title>
   <meta name="theme-color" content="#2A59D1">
   <link rel="icon" href="img/marca/tacita.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/styles.css?v=5">
-  <link rel="stylesheet" href="css/admin.css?v=5">
+  <link rel="stylesheet" href="css/styles.css?v=6">
+  <link rel="stylesheet" href="css/admin.css?v=6">
 </head>
 <body class="admin">
 
@@ -54,6 +54,7 @@
       <nav class="tabs" role="tablist">
         <button type="button" class="tab activo" data-tab="actividades" role="tab">Actividades</button>
         <button type="button" class="tab" data-tab="inscritos" role="tab">Inscritos</button>
+        <button type="button" class="tab" data-tab="finanzas" role="tab">Finanzas</button>
         <button type="button" class="tab" data-tab="solicitudes" role="tab">Solicitudes privadas <span class="contador" id="cont-sol" hidden></span></button>
       </nav>
 
@@ -88,6 +89,29 @@
           <table class="tabla" id="tabla-inscritos">
             <thead>
               <tr><th>Nombre</th><th>Personas</th><th>Total</th><th>Teléfono</th><th>Correo</th><th>Inscrito</th><th>Pago</th><th>Comprobante</th><th></th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Finanzas -->
+      <section id="tab-finanzas" hidden>
+        <div class="barra">
+          <label class="select-label">Año
+            <select id="fin-anio"></select>
+          </label>
+        </div>
+        <div class="fin-resumen" id="fin-resumen"></div>
+        <div class="fin-grafica-wrap">
+          <div class="fin-leyenda"><span><i class="lg lg-rec"></i> Recaudado</span><span><i class="lg lg-cob"></i> Por cobrar</span></div>
+          <div id="fin-grafica" role="img" aria-label="Gráfica de ingresos por mes"></div>
+        </div>
+        <p class="hint fin-nota">Recaudado: inscripciones marcadas como pagadas. Por cobrar: pendientes o sin marcar. Los meses se cuentan por la fecha del taller.</p>
+        <div class="tabla-wrap">
+          <table class="tabla" id="tabla-finanzas">
+            <thead>
+              <tr><th>Mes</th><th>Inscripciones</th><th>Personas</th><th>Modelado</th><th>Pintura de taza</th><th>Pintura de tile</th><th>Otros</th><th>Recaudado</th><th>Por cobrar</th></tr>
             </thead>
             <tbody></tbody>
           </table>
@@ -211,6 +235,27 @@
     </div>
   </div>
 
+  <!-- Modal: avisar que las piezas están listas -->
+  <div id="modal-retiro" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="retiro-titulo">
+      <button type="button" class="modal-cerrar" id="btn-retiro-cerrar" aria-label="Cerrar">&times;</button>
+      <h3 id="retiro-titulo">Piezas listas</h3>
+      <p id="retiro-detalle" class="resumen"></p>
+      <form id="form-retiro" novalidate>
+        <div id="retiro-lista" class="retiro-lista"></div>
+        <label>Mensaje para agregar <span class="hint">(opcional)</span>
+          <textarea id="retiro-texto" rows="3" maxlength="500" placeholder="Ej.: Estamos de lunes a viernes de 2 a 6 p. m."></textarea>
+        </label>
+        <p class="hint">Cada persona recibe su propio correo: sus piezas están listas, se retiran en el taller y el delivery se coordina con costo adicional.</p>
+        <p id="retiro-error" class="error" role="alert" hidden></p>
+        <div class="botones-fila">
+          <button type="button" class="btn-sec" id="btn-retiro-cancelar">Cancelar</button>
+          <button type="submit" class="btn" id="btn-retiro-ok">Enviar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal aprobar / rechazar solicitud de taller privado -->
   <div id="modal-sol" class="modal" hidden>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="sol-titulo">
@@ -233,8 +278,8 @@
 
   <div id="toast" class="toast" role="status" hidden></div>
 
-  <script src="js/config.js?v=5"></script>
-  <script src="js/common.js?v=5"></script>
-  <script src="js/admin.js?v=5"></script>
+  <script src="js/config.js?v=6"></script>
+  <script src="js/common.js?v=6"></script>
+  <script src="js/admin.js?v=6"></script>
 </body>
 </html>

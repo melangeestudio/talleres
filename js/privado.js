@@ -6,7 +6,7 @@
   const { MESES, esc, formatHora, formatMonto, personasTxt, postApi, partesFecha } = window.Mel;
   const $ = (id) => document.getElementById(id);
   const DIAS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-  const ETIQUETA = { modelado: 'Modelado', pintura: 'Pintura' };
+  let ETIQUETA = { modelado: 'Modelado', pintura: 'Pintura de taza', tile: 'Pintura de tile' };
 
   let info = null;      // info.privado
   let mesCal = 0;       // año * 12 + mes
@@ -51,7 +51,13 @@
   // Entre semana y fines de semana (sáb/dom) tienen horarios distintos.
   function rangoDe(f) {
     const d = new Date(Number(f.slice(0, 4)), Number(f.slice(5, 7)) - 1, Number(f.slice(8, 10))).getDay();
-    return (d === 0 || d === 6) ? info.horarios.finde : info.horarios.semana;
+    return Object.assign({}, (d === 0 || d === 6) ? info.horarios.finde : info.horarios.semana);
+  }
+
+  function restar(hhmm, horas) {
+    const [h, m] = hhmm.split(':').map(Number);
+    const t = Math.max(0, h * 60 + m - Math.round(horas * 60));
+    return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
   }
 
   function llenarHoras() {
@@ -63,6 +69,7 @@
     }
     const previa = sel.value;
     const r = rangoDe(fechaSel);
+    r.fin = restar(info.horaCierre, info.horas[$('priv-tipo').value] || 2);
     sel.innerHTML = opcionesHora(r);
     sel.disabled = false;
     if (previa && sel.querySelector(`option[value="${previa}"]`)) sel.value = previa;
@@ -81,6 +88,11 @@
     return out.join('');
   }
 
+  function infoTipo() {
+    const t = $('priv-tipo').value;
+    $('priv-tipo-info').innerHTML = window.Mel.tipoInfoHTML(t, info.precios[t]);
+  }
+
   function actualizarTotal() {
     const n = Number($('priv-personas').value);
     const precio = info.precios[$('priv-tipo').value];
@@ -97,9 +109,12 @@
     $('priv-form').reset();
     fechaSel = '';
     mesCal = mesIdx(info.minFecha);
+    ETIQUETA = Object.assign({}, ETIQUETA, info.etiquetas || {});
+    $('priv-nota').textContent = info.notaPrivado || '';
     $('priv-tipo').innerHTML = Object.keys(ETIQUETA).map((t) =>
       `<option value="${t}">${ETIQUETA[t]} · ${MONEDA}${formatMonto(info.precios[t])} p/p</option>`).join('');
     llenarHoras();
+    infoTipo();
     $('priv-personas').max = info.maxPersonas;
     $('priv-max').textContent = info.maxPersonas;
     renderCal();
@@ -163,7 +178,7 @@
   $('modal-privado').addEventListener('click', (e) => { if (e.target === $('modal-privado')) cerrar(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('modal-privado').hidden) cerrar(); });
   $('priv-form').addEventListener('submit', enviar);
-  $('priv-tipo').addEventListener('change', actualizarTotal);
+  $('priv-tipo').addEventListener('change', () => { actualizarTotal(); infoTipo(); llenarHoras(); });
   $('priv-personas').addEventListener('input', actualizarTotal);
   $('priv-cal').addEventListener('click', (e) => {
     const nav = e.target.closest('button[data-nav]');

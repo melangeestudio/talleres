@@ -53,7 +53,7 @@
   const mesTitulo = (idx) => `${MESES[idx % 12]} ${Math.floor(idx / 12)}`;
 
   // Ilustración de la marca para cada familia de taller.
-  const ILUSTRACION = { modelado: 'jarron', pintura: 'jarron-lila', creativo: 'jarron' };
+  const ILUSTRACION = { modelado: 'jarron', pintura: 'jarron-lila', creativo: 'jarron-luz' };
 
   function textoCupos(disp) {
     if (disp <= 0) return 'Agotado';
@@ -251,8 +251,9 @@
     const f = infoMie.fechas.find((x) => x.fechaISO === $('f-mie-fecha').value);
     const t = f && f.tipos.find((x) => x.tipo === $('f-mie-tipo').value);
     if (!t) { seleccionada = null; return; }
+    $('mie-tipo-info').innerHTML = window.Mel.tipoInfoHTML(t.tipo, t.precio);
     seleccionada = {
-      id: t.id, nombre: (t.tipo === 'modelado' ? 'Hacer' : 'Pintar') + '-Miércoles',
+      id: t.id, nombre: ({ modelado: 'Hacer', pintura: 'Taza', tile: 'Tile' }[t.tipo] || 'Taza') + '-Miércoles',
       fechaISO: f.fechaISO, hora: f.hora, precio: t.precio,
       cuposDisponibles: t.cuposDisponibles, cuposTotales: t.cuposTotales
     };

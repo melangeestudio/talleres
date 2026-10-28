@@ -9,6 +9,8 @@ window.CONFIG = {
     hacer: 'Modelado',
     pintar: 'Pintura',
     pintura: 'Pintura',
+    taza: 'Pintura de taza',
+    tile: 'Pintura de tile',
     otros: 'Taller creativo',
     charms: 'Taller creativo'
   },
@@ -17,8 +19,31 @@ window.CONFIG = {
   TIPOS: [
     { valor: 'Hacer', etiqueta: 'Modelado' },
     { valor: 'Pintar', etiqueta: 'Pintura' },
+    { valor: 'Taza', etiqueta: 'Pintura de taza' },
+    { valor: 'Tile', etiqueta: 'Pintura de tile' },
     { valor: 'Otros', etiqueta: 'Taller creativo' }
   ],
+  // Qué trata cada tipo de taller (miércoles y talleres privados). La clave coincide con el tipo del backend.
+  TIPOS_INFO: {
+    modelado: {
+      titulo: 'Modelado: cerámica desde cero',
+      texto: 'Crea tu pieza a mano desde cero y después píntala dejando volar tu creatividad. Es la experiencia completa de la cerámica: experimentar con la arcilla y con distintas técnicas.',
+      puntos: ['Dura hasta 3 horas', 'Pensado para grupos de 8 a 10 personas', 'Desde los 10 años, sin experiencia previa', 'Incluye materiales y horneado de tu pieza'],
+      ilustracion: 'jarron'
+    },
+    pintura: {
+      titulo: 'Pintura de taza',
+      texto: 'Pinta una taza de cerámica que ya viene horneada: un lienzo en blanco para dibujar lo que quieras. Ideal si disfrutas de pintar o solo quieres pasarla bien con tus amigos y personalizar tu taza.',
+      puntos: ['Dura hasta 2 horas', 'Desde los 10 años, sin experiencia previa', 'Incluye materiales y horneado de tu pieza'],
+      ilustracion: 'jarron-lila'
+    },
+    tile: {
+      titulo: 'Pintura de tile / mosaico',
+      texto: 'Pinta tu propio tile o mosaico de cerámica, ya horneado: una pieza decorativa para regalar o lucir en tu casa. Es un plan tranquilo y creativo, sin necesidad de experiencia.',
+      puntos: ['Dura hasta 2 horas', 'Desde los 10 años, sin experiencia previa', 'Incluye materiales y horneado de tu pieza'],
+      ilustracion: 'flor'
+    }
+  },
   // Ubicación del taller (se muestra en el pie de página y en la confirmación de inscripción).
   UBICACION: {
     lineas: ['Edificio 71, Segundo Piso, Local 9', 'Vía Argentina'],

@@ -216,7 +216,7 @@ a { color: var(--azurita); }
 }
 .card.cat-modelado { --cat: var(--liquen); }
 .card.cat-pintura  { --cat: var(--azurita); }
-.card.cat-creativo { --cat: var(--fuego); }
+.card.cat-creativo { --cat: var(--terracota); }
 
 .card-banda {
   position: relative; height: 118px;
@@ -482,7 +482,7 @@ form input[type=file] { padding: 9px 10px; background: var(--papel); }
 }
 .chip.cat-modelado { --cat: var(--liquen); }
 .chip.cat-pintura { --cat: var(--mochi); }
-.chip.cat-creativo { --cat: var(--fuego); }
+.chip.cat-creativo { --cat: var(--terracota); }
 .chip:hover { background: var(--azurita); color: var(--luz); }
 .chip.agotado { opacity: .5; text-decoration: line-through; cursor: not-allowed; }
 .chip.agotado:hover { background: #fff; color: var(--tinta); }
@@ -593,3 +593,23 @@ form textarea { resize: vertical; min-height: 70px; }
 .hero .lead .lead-link:hover { color: var(--liquen); }
 
 .hint-hora { margin: -8px 0 14px; font-size: .84rem; }
+
+/* ---------- Tipos de taller (tarjeta informativa en los formularios) ---------- */
+.tipo-info { margin: -4px 0 14px; }
+.tipo-info:empty { display: none; }
+.tipo-card {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--luz); border: 2px dashed var(--azurita); border-radius: 8px 11px 7px 10px; padding: 12px 14px;
+}
+.tipo-ilus { flex-shrink: 0; width: 46px; height: 54px; object-fit: contain; margin-top: 2px; }
+.tipo-cuerpo h4 { margin: 0 0 4px; font-family: var(--t-titulo); font-weight: 800; font-size: 1.05rem; color: var(--azurita); line-height: 1.15; }
+.tipo-precio { font-family: var(--t-texto); font-weight: 600; font-size: .78rem; color: var(--fuego); white-space: nowrap; margin-left: 4px; }
+.tipo-cuerpo p { margin: 0 0 6px; font-size: .88rem; color: var(--tinta); line-height: 1.4; }
+.tipo-cuerpo ul { margin: 0; padding-left: 18px; font-size: .84rem; color: var(--suave); }
+.tipo-cuerpo li { margin: 1px 0; }
+.nota-privado {
+  margin: 0 0 14px; padding: 10px 14px; font-size: .88rem; font-weight: 500; color: var(--terracota);
+  background: rgba(201, 209, 94, .28); border-radius: 10px 12px 9px 11px;
+}
+.nota-privado:empty { display: none; }
+.nota-privado::before { content: '🎈 '; }

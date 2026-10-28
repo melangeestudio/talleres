@@ -11,7 +11,7 @@
   <link rel="icon" href="img/marca/tacita.svg" type="image/svg+xml">
   <link rel="preload" href="fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/schoolbell.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/styles.css?v=5">
+  <link rel="stylesheet" href="css/styles.css?v=6">
 </head>
 <body>
   <!-- Íconos reutilizables -->
@@ -131,6 +131,7 @@
             <label>Taller
               <select id="f-mie-tipo"></select>
             </label>
+            <div id="mie-tipo-info" class="tipo-info"></div>
           </div>
           <label>Nombre completo
             <input type="text" name="nombre" required maxlength="100" autocomplete="name">
@@ -196,9 +197,11 @@
         <p class="resumen">Cuéntanos qué tienes en mente. Revisamos tu solicitud y te escribimos para confirmar; todavía no es una reserva.</p>
 
         <form id="priv-form" novalidate>
+          <p class="nota-privado" id="priv-nota"></p>
           <label>Tipo de taller
             <select name="tipo" id="priv-tipo"></select>
           </label>
+          <div id="priv-tipo-info" class="tipo-info"></div>
 
           <div class="campo-cal">
             <span class="campo-cal-label">Fecha</span>
@@ -257,9 +260,9 @@
     </div>
   </div>
 
-  <script src="js/config.js?v=5"></script>
-  <script src="js/common.js?v=5"></script>
-  <script src="js/app.js?v=5"></script>
-  <script src="js/privado.js?v=5"></script>
+  <script src="js/config.js?v=6"></script>
+  <script src="js/common.js?v=6"></script>
+  <script src="js/app.js?v=6"></script>
+  <script src="js/privado.js?v=6"></script>
 </body>
 </html>

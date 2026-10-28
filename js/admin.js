@@ -155,6 +155,7 @@
     try {
       await cargarActividades();
       if (tabActual === 'inscritos' && !$('sel-actividad').value) await cargarInscritos();
+      if (tabActual === 'finanzas') await cargarFinanzas();
       if (tabActual === 'solicitudes') await cargarSolicitudes();
       else cargarSolicitudes(true);
       toast('Datos actualizados');
@@ -182,9 +183,11 @@
     $('tab-actividades').hidden = t !== 'actividades';
     $('tab-inscritos').hidden = t !== 'inscritos';
     $('tab-solicitudes').hidden = t !== 'solicitudes';
+    $('tab-finanzas').hidden = t !== 'finanzas';
     document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('activo', b.dataset.tab === t));
     if (t === 'inscritos') cargarInscritos();
     if (t === 'solicitudes') cargarSolicitudes();
+    if (t === 'finanzas') cargarFinanzas();
   }
 
   document.querySelector('.tabs').addEventListener('click', (e) => {
@@ -235,6 +238,7 @@
           <td>${esc(MONEDA)}${esc(formatMonto(a.precio))} <small>p/p</small></td>
           <td class="acciones">
             <button type="button" class="btn-mini" data-accion="inscritos" data-id="${id}">Inscritos</button>
+            <button type="button" class="btn-mini" data-accion="retiro" data-id="${id}" title="Avisar que las piezas están listas para retirar">Piezas listas</button>
             ${editable ? `<button type="button" class="btn-mini" data-accion="editar" data-id="${id}">Editar</button>` : ''}
             <button type="button" class="btn-mini peligro" data-accion="eliminar" data-id="${id}">Eliminar</button>
           </td>
@@ -251,6 +255,7 @@
     if (!a) return;
     if (b.dataset.accion === 'editar') abrirForm(a);
     else if (b.dataset.accion === 'eliminar') eliminar(a);
+    else if (b.dataset.accion === 'retiro') abrirRetiro(a);
     else if (b.dataset.accion === 'inscritos') {
       $('sel-actividad').value = String(a.id);
       cambiarTab('inscritos');
@@ -344,6 +349,7 @@
     cerrarElim();
     cerrarManual();
     cerrarSol();
+    cerrarRetiro();
   });
   $('f-tipo').addEventListener('change', actualizarNombreInterno);
   $('f-fecha').addEventListener('input', actualizarNombreInterno);
@@ -398,6 +404,157 @@
     }
   });
 
+
+
+  // ---------- finanzas ----------
+  let finanzas = null;
+  const TIPOS_FIN = ['modelado', 'pintura', 'tile', 'otros'];
+  const mesCorto = (m) => MESES[Number(m.slice(5, 7)) - 1].slice(0, 3);
+  const dinero = (n) => `${MONEDA}${Number(n).toLocaleString('en-US', { minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: 2 })}`;
+
+  async function cargarFinanzas() {
+    try {
+      const r = await api('finanzas');
+      finanzas = r;
+      const anios = [...new Set(r.meses.map((m) => m.mes.slice(0, 4)).concat(String(r.hoy || hoyISO()).slice(0, 4)))].sort();
+      const sel = $('fin-anio');
+      const previo = sel.value;
+      sel.innerHTML = anios.map((a) => `<option value="${a}">${a}</option>`).join('');
+      sel.value = anios.includes(previo) ? previo : String(r.hoy || hoyISO()).slice(0, 4);
+      renderFinanzas();
+    } catch (err) {
+      mostrarError(err, 'No se pudieron cargar las finanzas.');
+    }
+  }
+
+  function nuevoMes(mes) { return { mes, recaudado: 0, porCobrar: 0, personas: 0, inscripciones: 0, porTipo: {} }; }
+
+  function renderFinanzas() {
+    if (!finanzas) return;
+    const anio = $('fin-anio').value;
+    const porMes = {};
+    for (let i = 1; i <= 12; i++) { const k = `${anio}-${String(i).padStart(2, '0')}`; porMes[k] = nuevoMes(k); }
+    finanzas.meses.filter((m) => m.mes.startsWith(anio)).forEach((m) => { porMes[m.mes] = m; });
+    const meses = Object.values(porMes);
+    const tot = meses.reduce((t, m) => ({ rec: t.rec + m.recaudado, cob: t.cob + m.porCobrar, ins: t.ins + m.inscripciones, per: t.per + m.personas }), { rec: 0, cob: 0, ins: 0, per: 0 });
+    const mejor = meses.reduce((b, m) => (m.recaudado > b.recaudado ? m : b), meses[0]);
+    const mesActual = String(finanzas.hoy || hoyISO()).slice(0, 7);
+    const actual = porMes[mesActual];
+
+    $('fin-resumen').innerHTML = [
+      ['Recaudado en ' + anio, dinero(tot.rec), 'rec'],
+      ['Por cobrar', dinero(tot.cob), 'cob'],
+      [actual ? 'Este mes (' + MESES[Number(mesActual.slice(5)) - 1].toLowerCase() + ')' : 'Mejor mes', actual ? dinero(actual.recaudado) : dinero(mejor.recaudado), ''],
+      ['Inscripciones · personas', `${tot.ins} · ${tot.per}`, '']
+    ].map(([t, v, c]) => `<div class="fin-card ${c}"><span class="fin-t">${esc(t)}</span><strong>${esc(v)}</strong></div>`).join('');
+
+    // gráfica de barras apiladas (SVG propio: la página no carga librerías externas)
+    const W = 760, H = 280, L = 52, R = 12, T = 18, B = 34;
+    const max = Math.max(1, ...meses.map((m) => m.recaudado + m.porCobrar));
+    const paso = Math.pow(10, Math.floor(Math.log10(max)));
+    const techo = Math.ceil(max / paso) * paso;
+    const bw = (W - L - R) / 12;
+    const y = (v) => T + (H - T - B) * (1 - v / techo);
+    let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" class="fin-svg">`;
+    for (let i = 0; i <= 4; i++) {
+      const v = techo * i / 4;
+      svg += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="fin-grid"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" class="fin-eje">${esc(dinero(Math.round(v)))}</text>`;
+    }
+    meses.forEach((m, i) => {
+      const x = L + i * bw + bw * 0.16, w = bw * 0.68;
+      const hr = (H - T - B) * m.recaudado / techo, hc = (H - T - B) * m.porCobrar / techo;
+      svg += `<g><title>${esc(MESES[i])}: recaudado ${esc(dinero(m.recaudado))}, por cobrar ${esc(dinero(m.porCobrar))}</title>` +
+        (hr > 0 ? `<rect x="${x}" y="${y(0) - hr}" width="${w}" height="${hr}" rx="3" class="fin-rec"/>` : '') +
+        (hc > 0 ? `<rect x="${x}" y="${y(0) - hr - hc}" width="${w}" height="${hc}" rx="3" class="fin-cob"/>` : '') +
+        `<text x="${x + w / 2}" y="${H - 12}" text-anchor="middle" class="fin-eje">${esc(MESES[i].slice(0, 3))}</text>` +
+        (m.recaudado > 0 ? `<text x="${x + w / 2}" y="${y(0) - hr - hc - 5}" text-anchor="middle" class="fin-val">${esc(dinero(Math.round(m.recaudado)))}</text>` : '') + `</g>`;
+    });
+    $('fin-grafica').innerHTML = svg + '</svg>';
+
+    const celdaTipo = (m, t) => { const x = m.porTipo && m.porTipo[t]; return x && (x.recaudado || x.porCobrar) ? dinero(x.recaudado) : '<span class="hint">—</span>'; };
+    const filas = meses.filter((m) => m.inscripciones > 0);
+    const tbody = document.querySelector('#tabla-finanzas tbody');
+    if (!filas.length) { tbody.innerHTML = `<tr><td colspan="9" class="vacio">Sin movimientos en ${esc(anio)}.</td></tr>`; return; }
+    const tipoTot = (t) => dinero(filas.reduce((s, m) => s + ((m.porTipo && m.porTipo[t] && m.porTipo[t].recaudado) || 0), 0));
+    tbody.innerHTML = filas.map((m) => `
+      <tr><td><strong>${esc(MESES[Number(m.mes.slice(5)) - 1])}</strong></td><td>${m.inscripciones}</td><td>${m.personas}</td>
+        ${TIPOS_FIN.map((t) => `<td>${celdaTipo(m, t)}</td>`).join('')}
+        <td><strong>${esc(dinero(m.recaudado))}</strong></td><td>${m.porCobrar ? esc(dinero(m.porCobrar)) : '<span class="hint">—</span>'}</td></tr>`).join('') +
+      `<tr class="fin-total"><td>Total ${esc(anio)}</td><td>${tot.ins}</td><td>${tot.per}</td>${TIPOS_FIN.map((t) => `<td>${esc(tipoTot(t))}</td>`).join('')}<td>${esc(dinero(tot.rec))}</td><td>${esc(dinero(tot.cob))}</td></tr>`;
+  }
+  $('fin-anio').addEventListener('change', renderFinanzas);
+
+  // ---------- aviso: piezas listas para retirar ----------
+  let retiroAct = null;
+  let retiroLista = [];
+  let enviandoRetiro = false;
+
+  async function abrirRetiro(a) {
+    retiroAct = a;
+    $('retiro-titulo').textContent = 'Piezas listas';
+    $('retiro-detalle').textContent = `${nombreVisible(a.nombre)} · ${formatFecha(a)}`;
+    $('retiro-lista').innerHTML = '<p class="hint">Cargando inscritos…</p>';
+    $('retiro-texto').value = '';
+    $('retiro-error').hidden = true;
+    $('btn-retiro-ok').disabled = true;
+    $('modal-retiro').hidden = false;
+    document.body.style.overflow = 'hidden';
+    try {
+      retiroLista = await api('listarInscritos', { idActividad: a.id });
+      renderRetiro();
+    } catch (err) {
+      if (!err.silent) { $('retiro-lista').innerHTML = '<p class="error">No se pudo cargar la lista.</p>'; }
+    }
+  }
+
+  function renderRetiro() {
+    if (!retiroLista.length) { $('retiro-lista').innerHTML = '<p class="hint">Esta actividad no tiene inscritos.</p>'; actualizarRetiro(); return; }
+    $('retiro-lista').innerHTML = retiroLista.map((i) => `
+      <label class="retiro-fila${i.email ? '' : ' sin-correo'}">
+        <input type="checkbox" data-id="${esc(i.id)}" ${i.email && !i.avisoRetiro ? 'checked' : ''} ${i.email ? '' : 'disabled'}>
+        <span><strong>${esc(i.nombre)}</strong> <small>${esc(personasTxt(i.personas))}</small><br>
+          <small>${i.email ? esc(i.email) : 'Sin correo: avísale por teléfono' + (i.telefono ? ' (' + esc(i.telefono) + ')' : '')}${i.avisoRetiro ? ` · <em>ya avisado el ${esc(i.avisoRetiro)}</em>` : ''}</small></span>
+      </label>`).join('');
+    actualizarRetiro();
+  }
+
+  function seleccionRetiro() { return [...document.querySelectorAll('#retiro-lista input:checked')].map((c) => c.dataset.id); }
+  function actualizarRetiro() {
+    const n = seleccionRetiro().length;
+    $('btn-retiro-ok').disabled = n === 0 || enviandoRetiro;
+    $('btn-retiro-ok').textContent = n ? `Enviar a ${n} ${n === 1 ? 'persona' : 'personas'}` : 'Enviar';
+  }
+  $('retiro-lista').addEventListener('change', actualizarRetiro);
+
+  function cerrarRetiro(forzar) {
+    if (enviandoRetiro && !forzar) return;
+    $('modal-retiro').hidden = true;
+    document.body.style.overflow = '';
+  }
+  $('btn-retiro-cerrar').addEventListener('click', () => cerrarRetiro());
+  $('btn-retiro-cancelar').addEventListener('click', () => cerrarRetiro());
+  $('modal-retiro').addEventListener('click', (e) => { if (e.target === $('modal-retiro')) cerrarRetiro(); });
+
+  $('form-retiro').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const ids = seleccionRetiro();
+    if (enviandoRetiro || !ids.length || !retiroAct) return;
+    enviandoRetiro = true;
+    const btn = $('btn-retiro-ok');
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    $('retiro-error').hidden = true;
+    try {
+      const r = await api('avisarRetiro', { idActividad: retiroAct.id, ids, mensaje: $('retiro-texto').value.trim() });
+      cerrarRetiro(true);
+      const extra = (r.fallidos ? ` ${r.fallidos} no se pudieron enviar.` : '') + (r.sinCorreo ? ` ${r.sinCorreo} sin correo.` : '');
+      toast(`${r.enviados} ${r.enviados === 1 ? 'correo enviado' : 'correos enviados'}.${extra}`, !!r.fallidos);
+    } catch (err) {
+      if (!err.silent) { $('retiro-error').textContent = err.message || 'No se pudo enviar.'; $('retiro-error').hidden = false; }
+    } finally {
+      enviandoRetiro = false;
+      actualizarRetiro();
+    }
+  });
 
   // ---------- solicitudes de taller privado ----------
   let solicitudes = [];
@@ -823,7 +980,7 @@
       }
       tbody.innerHTML = lista.map((i) => `
         <tr>
-          <td>${esc(i.nombre)}${i.origen === 'Manual' ? '<span class="badge manual">Manual</span>' : ''}</td>
+          <td>${esc(i.nombre)}${i.origen === 'Manual' ? '<span class="badge manual">Manual</span>' : ''}${i.avisoRetiro ? `<br><small class="ig">Piezas avisadas ${esc(i.avisoRetiro)}</small>` : ''}</td>
           <td>${esc(Number(i.personas) || 1)}</td>
           <td>${i.total === '' || i.total == null ? '' : esc(MONEDA + formatMonto(i.total))}</td>
           <td>${i.telefono ? `<a href="tel:${esc(String(i.telefono).replace(/[^\d+]/g, ''))}">${esc(i.telefono)}</a>` : '<span class="hint">—</span>'}</td>
