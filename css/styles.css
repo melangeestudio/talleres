@@ -215,7 +215,7 @@ a { color: var(--azurita); }
   transition: transform .18s ease;
 }
 .card.cat-modelado { --cat: var(--liquen); }
-.card.cat-pintura  { --cat: var(--mochi); }
+.card.cat-pintura  { --cat: var(--azurita); }
 .card.cat-creativo { --cat: var(--fuego); }
 
 .card-banda {
@@ -228,8 +228,6 @@ a { color: var(--azurita); }
   height: 118px; width: auto;
   transform: rotate(-5deg);
 }
-.cat-pintura .card-ilus { height: 104px; bottom: -8px; transform: rotate(8deg); }
-.cat-creativo .card-ilus { height: 128px; bottom: -22px; left: 10px; transform: rotate(-10deg); }
 
 /* Sello de fecha (como matasellos) */
 .sello {
@@ -590,3 +588,6 @@ form textarea { resize: vertical; min-height: 70px; }
 #priv-ok-vista p { color: var(--suave); }
 #priv-ok-vista #priv-ok-detalle { color: var(--tinta); }
 #priv-ok-vista .ok-resumen { color: var(--azurita); font-weight: 700; }
+
+.lead-link { color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.lead-link:hover { color: var(--luz); }
