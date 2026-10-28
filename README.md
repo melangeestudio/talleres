@@ -24,7 +24,7 @@ fonts/            Bricolage Grotesque, Inter y Schoolbell (autoalojadas, licenci
 - El navegador habla con el Web App de Apps Script (`API_URL` en `js/config.js`).
 - Las peticiones POST usan `Content-Type: text/plain` para evitar el preflight de CORS.
 - El backend guarda en dos pestañas del Sheet (Actividades e Inscripciones), descuenta cupos, sube el comprobante a Drive, mantiene un evento de Calendar por taller y envía correos.
-- El panel pide la contraseña en cada operación y el backend la compara con la propiedad de script `ADMIN_PASSWORD`. No hay sesión ni contraseña en el código del sitio.
+- El panel inicia sesión con contraseña (y código de app autenticadora si el MFA está activo) y recibe un token de sesión de 6 h. La contraseña no se guarda ni se vuelve a enviar.
 
 ## Configuración
 
@@ -44,6 +44,15 @@ Para cambiar el backend (correos, Calendar, duración de eventos, personas máxi
 **Actividades:** ID · Nombre · Fecha · Hora · Cupos_Totales · Cupos_Disponibles · Precio · Descripcion · ID_Evento
 
 **Inscripciones:** ID · ID_Actividad · Nombre · Telefono · Email · Link comprobante · Fecha · Personas · Total · Pagado · Origen
+
+## Seguridad
+
+- **Contraseña:** propiedad de script `ADMIN_PASSWORD` (Apps Script → Configuración del proyecto → Propiedades del script). Usar una frase larga.
+- **MFA (TOTP):** en el editor de Apps Script ejecutar `configurarMFA()` una vez; la clave aparece en el registro de ejecución y se agrega en la app autenticadora ("ingresar clave de configuración"). Si se pierde el teléfono: `desactivarMFA()` y volver a configurar.
+- **Bloqueo:** 5 intentos fallidos bloquean el ingreso 15 min y envían un aviso por correo. Las sesiones ya abiertas siguen funcionando.
+- **Formulario público:** campo trampa anti-bots, límites por correo/teléfono (4 por 30 min) y global (30 por hora), consentimiento obligatorio y comprobantes solo en imagen o PDF.
+- **Datos:** Sheet y carpeta de comprobantes privados (sin enlaces públicos). El script corre con la cuenta del estudio: activar verificación en dos pasos en esa cuenta de Google.
+- **Navegador:** Content-Security-Policy en `index.html` y `admin.html` (solo scripts propios y conexión a Apps Script).
 
 ## Publicación
 

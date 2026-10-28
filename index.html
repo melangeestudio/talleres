@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
   <title>Mélange Estudio · Talleres de cerámica</title>
   <meta name="description" content="Talleres de cerámica en Mélange Estudio, Vía Argentina. Mira el calendario, reserva tu cupo y paga por Yappy.">
   <meta name="theme-color" content="#2A59D1">
@@ -124,13 +126,26 @@
           <p class="total-linea" id="total-linea"></p>
 
           <div class="pago">
-            <img src="img/yappy.svg" alt="Yappy" class="yappy-logo" onerror="this.style.display='none'">
+            <img src="img/yappy.svg" alt="Yappy" class="yappy-logo">
             <p>Paga <strong id="pago-total"></strong> por <strong>Yappy</strong> al <strong id="yappy-num"></strong> y adjunta aquí tu comprobante.</p>
           </div>
 
           <label>Comprobante de pago <span class="hint">(foto o PDF, máx. <span id="max-mb"></span> MB)</span>
             <input type="file" name="comprobante" id="comprobante" accept="image/*,application/pdf" required>
           </label>
+
+          <div class="trampa" aria-hidden="true">
+            <label>Sitio web <input type="text" name="website" id="f-web" tabindex="-1" autocomplete="off"></label>
+          </div>
+
+          <label class="consentimiento">
+            <input type="checkbox" name="acepto" id="f-acepto" required>
+            <span>Acepto que Mélange Estudio use mis datos solo para gestionar mi inscripción.</span>
+          </label>
+          <details class="privacidad">
+            <summary>¿Cómo cuidamos tus datos?</summary>
+            <p>Guardamos tu nombre, teléfono, correo y comprobante solo para gestionar tu inscripción y escribirte sobre el taller. Los ve únicamente el equipo de Mélange Estudio; no los vendemos ni los compartimos con otras empresas. Se almacenan en Google (Sheets y Drive) con acceso restringido. Si quieres que los borremos, escríbenos a <a id="priv-correo" href="#"></a>.</p>
+          </details>
 
           <p id="form-error" class="error" role="alert" hidden></p>
           <button type="submit" id="btn-enviar" class="btn">Confirmar inscripción</button>

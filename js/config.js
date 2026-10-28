@@ -24,6 +24,8 @@ window.CONFIG = {
     lineas: ['Edificio 71, Segundo Piso, Local 9', 'Vía Argentina'],
     mapsUrl: 'https://maps.app.goo.gl/aoGrgTdQJbLgUuij9'
   },
+  // Correo público del estudio (aviso de privacidad: a dónde escribir para borrar datos).
+  CONTACTO_EMAIL: 'Melangestudioinfo@gmail.com',
   // Número de Yappy que verá el cliente en el formulario.
   YAPPY_NUMERO: '6292-0706'
 };

@@ -139,3 +139,7 @@ body.admin .wrap { max-width: 1240px; }
 .check-correo { display: flex; align-items: flex-start; font-weight: 600; color: var(--tinta); margin: -2px 0 14px; }
 .check-correo input { width: 16px; height: 16px; display: inline-block; margin: 2px 0 0; padding: 0; flex-shrink: 0; }
 .check-correo input:disabled + span { color: var(--suave); }
+
+/* Segundo paso del ingreso (código MFA) */
+#login-code { letter-spacing: .3em; font-size: 1.3rem; text-align: center; font-variant-numeric: tabular-nums; }
+#btn-login-volver { display: block; margin: 14px auto 0; }

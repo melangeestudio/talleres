@@ -4,9 +4,10 @@
   const { MONEDA, TIPOS } = window.CONFIG;
   const { MESES, esc, hoyISO, nombreVisible, formatFecha, hora24, formatHora, formatMonto, personasTxt, postApi, getApi } = window.Mel;
   const $ = (id) => document.getElementById(id);
-  const CLAVE = 'melange_admin_pw';
+  const CLAVE = 'melange_admin_sesion';
 
-  let password = null;
+  let token = null;          // token de sesión (la contraseña no se guarda)
+  let pwPendiente = null;    // solo en memoria mientras se pide el código MFA
   let actividades = [];
   let editando = null;
   let guardando = false;
@@ -16,7 +17,7 @@
 
   // ---------- sesión (solo dura mientras la pestaña esté abierta) ----------
   function leerSesion() { try { return sessionStorage.getItem(CLAVE); } catch (e) { return null; } }
-  function guardarSesion(pw) { try { sessionStorage.setItem(CLAVE, pw); } catch (e) { /* sin storage */ } }
+  function guardarSesion(t) { try { sessionStorage.setItem(CLAVE, t); } catch (e) { /* sin storage */ } }
   function borrarSesion() { try { sessionStorage.removeItem(CLAVE); } catch (e) { /* sin storage */ } }
 
   // ---------- UI básica ----------
@@ -45,11 +46,29 @@
     e.textContent = msg || '';
     e.hidden = !msg;
     $('login-pass').value = '';
-    $('login-pass').focus();
+    pwPendiente = null;
+    pasoCodigo(false);
+  }
+
+  // Segundo paso del ingreso: el código de 6 dígitos de la app autenticadora.
+  function pasoCodigo(on) {
+    $('lbl-pass').hidden = on;
+    $('lbl-code').hidden = !on;
+    $('btn-login-volver').hidden = !on;
+    $('login-code').value = '';
+    (on ? $('login-code') : $('login-pass')).focus();
+  }
+
+  function errorLogin(msg) {
+    const e = $('login-error');
+    e.textContent = msg || '';
+    e.hidden = !msg;
   }
 
   function cerrarSesion(msg) {
-    password = null;
+    // Invalida el token también en el servidor (sin esperar la respuesta).
+    if (token) postApi({ action: 'logout', token }).catch(() => {});
+    token = null;
     borrarSesion();
     cerrarModal(true);
     cerrarElim(true);
@@ -57,9 +76,9 @@
     mostrarLogin(msg);
   }
 
-  // Llamadas que requieren contraseña. Si el backend dice "No autorizado", se vuelve al login.
+  // Llamadas que requieren sesión. Si el backend dice "No autorizado", se vuelve al login.
   async function api(action, extra) {
-    const r = await postApi(Object.assign({ action, password }, extra));
+    const r = await postApi(Object.assign({ action, token }, extra));
     if (r && r.error === 'No autorizado') {
       cerrarSesion('La sesión expiró. Ingresa de nuevo.');
       const e = new Error('No autorizado');
@@ -78,27 +97,37 @@
   // ---------- login ----------
   $('form-login').addEventListener('submit', async (ev) => {
     ev.preventDefault();
-    const pw = $('login-pass').value;
-    if (!pw) return;
+    const enCodigo = !$('lbl-code').hidden;
+    const pw = enCodigo ? pwPendiente : $('login-pass').value;
+    const codigo = enCodigo ? $('login-code').value.trim() : '';
+    if (!pw || (enCodigo && !codigo)) return;
     const btn = $('btn-login');
     btn.disabled = true;
     btn.textContent = 'Verificando…';
     try {
-      const r = await postApi({ action: 'login', password: pw });
-      if (r.ok) {
-        password = pw;
-        guardarSesion(pw);
+      const r = await postApi({ action: 'login', password: pw, codigo });
+      if (r.ok && r.token) {
+        token = r.token;
+        guardarSesion(token);
+        $('login-pass').value = '';
+        pwPendiente = null;
         await entrar();
+      } else if (r.needsCode) {
+        pwPendiente = pw;                       // la contraseña ya fue correcta; falta el código
+        pasoCodigo(true);
+        errorLogin(r.error || '');
       } else {
-        mostrarLogin('Contraseña incorrecta.');
+        mostrarLogin(r.error || 'Contraseña incorrecta.');
       }
     } catch (err) {
-      mostrarLogin('No se pudo conectar. Intenta de nuevo.');
+      errorLogin('No se pudo conectar. Intenta de nuevo.');
     } finally {
       btn.disabled = false;
       btn.textContent = 'Entrar';
     }
   });
+
+  $('btn-login-volver').addEventListener('click', () => mostrarLogin());
 
   $('btn-salir').addEventListener('click', () => cerrarSesion());
 
@@ -665,9 +694,10 @@
     const guardada = leerSesion();
     if (!guardada) return mostrarLogin();
     try {
-      const r = await postApi({ action: 'login', password: guardada });
-      if (r.ok) { password = guardada; await entrar(); }
-      else { borrarSesion(); mostrarLogin(); }
+      token = guardada;
+      const r = await postApi({ action: 'sesion', token });
+      if (r && r.ok) await entrar();
+      else { token = null; borrarSesion(); mostrarLogin(); }
     } catch (err) {
       mostrarLogin('No se pudo conectar. Intenta de nuevo.');
     }

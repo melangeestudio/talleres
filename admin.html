@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
   <title>Panel · Mélange Estudio</title>
   <meta name="theme-color" content="#2A59D1">
   <link rel="icon" href="img/marca/tacita.svg" type="image/svg+xml">
@@ -18,11 +20,15 @@
       <img class="login-tacita" src="img/marca/tacita.svg" alt="" width="64" height="45">
       <h1>Mélange <span>estudio</span></h1>
       <p class="login-mano">panel de administración</p>
-      <label>Contraseña
+      <label id="lbl-pass">Contraseña
         <input type="password" id="login-pass" autocomplete="current-password" required>
+      </label>
+      <label id="lbl-code" hidden>Código de tu app autenticadora
+        <input type="text" id="login-code" inputmode="numeric" pattern="[0-9 ]*" maxlength="7" autocomplete="one-time-code" placeholder="123 456">
       </label>
       <p id="login-error" class="error" role="alert" hidden></p>
       <button type="submit" id="btn-login" class="btn">Entrar</button>
+      <button type="button" id="btn-login-volver" class="btn-link" hidden>Volver</button>
     </form>
   </main>
 
