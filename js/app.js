@@ -248,7 +248,6 @@
     const disp = Number(seleccionada.cuposDisponibles);
 
     if (!nombre || !telefono || !email) return mostrarError('Completa todos los campos.');
-    if (!f.acepto.checked) return mostrarError('Para inscribirte, acepta el uso de tus datos.');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return mostrarError('El correo no parece válido.');
     if (!Number.isInteger(personas) || personas < 1) return mostrarError('Indica cuántas personas se inscriben.');
     if (personas > disp) {
@@ -271,7 +270,6 @@
         action: 'inscribir',
         idActividad: seleccionada.id,
         nombre, telefono, email, personas,
-        acepto: true,
         web: $('f-web').value,   // campo trampa: vacío para personas
         comprobanteBase64: base64,
         comprobanteTipo: archivo.type || 'application/octet-stream'

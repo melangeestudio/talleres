@@ -41,8 +41,7 @@
     <div class="hero-cuerpo">
       <div class="hero-texto">
         <h1>Talleres de<br>cerámica</h1>
-        <p class="hero-mano">hechos con las manos y el amor.</p>
-        <p class="lead">Elige tu taller, reserva tu cupo y paga por Yappy. Sin crear cuenta.</p>
+        <p class="lead">Elige tu taller y reserva tu cupo.</p>
         <a class="hero-flecha" href="#talleres">mira lo que viene <span aria-hidden="true">↓</span></a>
       </div>
       <div class="hero-collage" aria-hidden="true">
@@ -138,14 +137,10 @@
             <label>Sitio web <input type="text" name="website" id="f-web" tabindex="-1" autocomplete="off"></label>
           </div>
 
-          <label class="consentimiento">
-            <input type="checkbox" name="acepto" id="f-acepto" required>
-            <span>Acepto que Mélange Estudio use mis datos solo para gestionar mi inscripción.</span>
-          </label>
-          <details class="privacidad">
-            <summary>¿Cómo cuidamos tus datos?</summary>
-            <p>Guardamos tu nombre, teléfono, correo y comprobante solo para gestionar tu inscripción y escribirte sobre el taller. Los ve únicamente el equipo de Mélange Estudio; no los vendemos ni los compartimos con otras empresas. Se almacenan en Google (Sheets y Drive) con acceso restringido. Si quieres que los borremos, escríbenos a <a id="priv-correo" href="#"></a>.</p>
-          </details>
+          <div class="privacidad">
+            <p class="privacidad-titulo">¿Cómo cuidamos tus datos?</p>
+            <p>Guardamos tu nombre, teléfono, correo y comprobante solo para gestionar tu inscripción y escribirte sobre el taller. Esta información se guarda cifrada en Google y la ve únicamente el equipo de Mélange Estudio; no la vendemos ni la compartimos con otras empresas. Si quieres que la borremos, escríbenos a <a id="priv-correo" href="#"></a>.</p>
+          </div>
 
           <p id="form-error" class="error" role="alert" hidden></p>
           <button type="submit" id="btn-enviar" class="btn">Confirmar inscripción</button>

@@ -126,12 +126,7 @@ a { color: var(--azurita); }
   font-size: clamp(3rem, 8.4vw, 6.4rem);
   line-height: .9; letter-spacing: -.025em;
 }
-.hero-mano {
-  margin: 14px 0 0;
-  font-family: var(--t-mano); font-size: clamp(1.5rem, 3.2vw, 2.2rem);
-  color: var(--liquen); line-height: 1.1;
-}
-.lead { margin: 18px 0 0; max-width: 430px; font-size: 1.06rem; color: #E9EEFF; }
+.lead { margin: 20px 0 0; max-width: 430px; font-size: 1.06rem; color: #E9EEFF; }
 .hero-flecha {
   display: inline-block; margin-top: 22px;
   font-family: var(--t-mano); font-size: 1.35rem; color: var(--luz); text-decoration: none;
@@ -537,15 +532,10 @@ form input[type=file] { padding: 9px 10px; background: var(--papel); }
 
 /* ---------- Privacidad y anti-bots ---------- */
 .trampa { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-.consentimiento {
-  display: flex; align-items: flex-start; gap: 10px; margin: 4px 0 8px;
-  font-weight: 500; font-size: .9rem; line-height: 1.35; color: var(--tinta);
+.privacidad {
+  margin: 4px 0 14px; padding: 12px 14px; font-size: .84rem; line-height: 1.45; color: var(--suave);
+  background: rgba(163, 190, 239, .18); border-radius: 10px 12px 9px 11px;
 }
-.consentimiento input {
-  width: 18px; height: 18px; margin: 1px 0 0; padding: 0; flex-shrink: 0;
-  display: inline-block; accent-color: var(--azurita);
-}
-.privacidad { margin: 0 0 14px; font-size: .84rem; color: var(--suave); }
-.privacidad summary { cursor: pointer; color: var(--azurita); font-weight: 600; width: fit-content; }
-.privacidad p { margin: 8px 0 0; line-height: 1.45; }
+.privacidad p { margin: 0; }
+.privacidad .privacidad-titulo { margin-bottom: 4px; font-family: var(--t-titulo); font-weight: 700; font-size: .9rem; color: var(--azurita); }
 .privacidad a { color: var(--azurita); word-break: break-all; }

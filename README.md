@@ -50,7 +50,7 @@ Para cambiar el backend (correos, Calendar, duración de eventos, personas máxi
 - **Usuarios:** cada persona es una propiedad de script (Apps Script → Configuración del proyecto → Propiedades del script) llamada `USER_<usuario>` con su contraseña como valor, por ejemplo `USER_ella` y `USER_boris`. Para quitar a alguien se borra su propiedad: sus sesiones dejan de valer. Usar frases largas.
 - **MFA (TOTP):** en el editor de Apps Script ejecutar `configurarMFA()`; crea una clave por usuario (en el registro de ejecución) y cada persona la agrega en su app autenticadora ("ingresar clave de configuración"). Para reiniciar a una persona: borrar su propiedad `TOTP_<usuario>` y volver a ejecutar. `desactivarMFA()` lo quita para todos.
 - **Bloqueo:** 5 intentos fallidos sobre un usuario lo bloquean 15 min y envían un aviso por correo (nombres inexistentes se frenan aparte, sin bloquear a usuarios reales). Las sesiones ya abiertas siguen funcionando.
-- **Formulario público:** campo trampa anti-bots, límites por correo/teléfono (4 por 30 min) y global (30 por hora), consentimiento obligatorio y comprobantes solo en imagen o PDF.
+- **Formulario público:** campo trampa anti-bots, límites por correo/teléfono (4 por 30 min) y global (30 por hora), aviso de privacidad visible y comprobantes solo en imagen o PDF.
 - **Datos:** Sheet y carpeta de comprobantes privados (sin enlaces públicos). El script corre con la cuenta del estudio: activar verificación en dos pasos en esa cuenta de Google.
 - **Navegador:** Content-Security-Policy en `index.html` y `admin.html` (solo scripts propios y conexión a Apps Script).
 
