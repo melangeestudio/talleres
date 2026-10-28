@@ -20,6 +20,9 @@
       <img class="login-tacita" src="img/marca/tacita.svg" alt="" width="64" height="45">
       <h1>Mélange <span>estudio</span></h1>
       <p class="login-mano">panel de administración</p>
+      <label id="lbl-user">Usuario
+        <input type="text" id="login-user" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="40" required>
+      </label>
       <label id="lbl-pass">Contraseña
         <input type="password" id="login-pass" autocomplete="current-password" required>
       </label>
@@ -41,6 +44,7 @@
         <span class="marca-estudio">panel</span>
       </span>
       <div class="admin-top-acc">
+        <span class="admin-usuario" id="admin-usuario" hidden></span>
         <button type="button" class="btn-link" id="btn-reload" title="Volver a cargar los datos">↻ Actualizar</button>
         <button type="button" class="btn-link" id="btn-salir">Cerrar sesión</button>
       </div>

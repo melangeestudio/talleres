@@ -24,7 +24,7 @@ fonts/            Bricolage Grotesque, Inter y Schoolbell (autoalojadas, licenci
 - El navegador habla con el Web App de Apps Script (`API_URL` en `js/config.js`).
 - Las peticiones POST usan `Content-Type: text/plain` para evitar el preflight de CORS.
 - El backend guarda en dos pestañas del Sheet (Actividades e Inscripciones), descuenta cupos, sube el comprobante a Drive, mantiene un evento de Calendar por taller y envía correos.
-- El panel inicia sesión con contraseña (y código de app autenticadora si el MFA está activo) y recibe un token de sesión de 6 h. La contraseña no se guarda ni se vuelve a enviar.
+- El panel inicia sesión con usuario y contraseña (y código de app autenticadora si ese usuario tiene MFA) y recibe un token de sesión de 6 h. La contraseña no se guarda ni se vuelve a enviar.
 
 ## Configuración
 
@@ -47,9 +47,9 @@ Para cambiar el backend (correos, Calendar, duración de eventos, personas máxi
 
 ## Seguridad
 
-- **Contraseña:** propiedad de script `ADMIN_PASSWORD` (Apps Script → Configuración del proyecto → Propiedades del script). Usar una frase larga.
-- **MFA (TOTP):** en el editor de Apps Script ejecutar `configurarMFA()` una vez; la clave aparece en el registro de ejecución y se agrega en la app autenticadora ("ingresar clave de configuración"). Si se pierde el teléfono: `desactivarMFA()` y volver a configurar.
-- **Bloqueo:** 5 intentos fallidos bloquean el ingreso 15 min y envían un aviso por correo. Las sesiones ya abiertas siguen funcionando.
+- **Usuarios:** cada persona es una propiedad de script (Apps Script → Configuración del proyecto → Propiedades del script) llamada `USER_<usuario>` con su contraseña como valor, por ejemplo `USER_ella` y `USER_boris`. Para quitar a alguien se borra su propiedad: sus sesiones dejan de valer. Usar frases largas.
+- **MFA (TOTP):** en el editor de Apps Script ejecutar `configurarMFA()`; crea una clave por usuario (en el registro de ejecución) y cada persona la agrega en su app autenticadora ("ingresar clave de configuración"). Para reiniciar a una persona: borrar su propiedad `TOTP_<usuario>` y volver a ejecutar. `desactivarMFA()` lo quita para todos.
+- **Bloqueo:** 5 intentos fallidos sobre un usuario lo bloquean 15 min y envían un aviso por correo (nombres inexistentes se frenan aparte, sin bloquear a usuarios reales). Las sesiones ya abiertas siguen funcionando.
 - **Formulario público:** campo trampa anti-bots, límites por correo/teléfono (4 por 30 min) y global (30 por hora), consentimiento obligatorio y comprobantes solo en imagen o PDF.
 - **Datos:** Sheet y carpeta de comprobantes privados (sin enlaces públicos). El script corre con la cuenta del estudio: activar verificación en dos pasos en esa cuenta de Google.
 - **Navegador:** Content-Security-Policy en `index.html` y `admin.html` (solo scripts propios y conexión a Apps Script).

@@ -143,3 +143,10 @@ body.admin .wrap { max-width: 1240px; }
 /* Segundo paso del ingreso (código MFA) */
 #login-code { letter-spacing: .3em; font-size: 1.3rem; text-align: center; font-variant-numeric: tabular-nums; }
 #btn-login-volver { display: block; margin: 14px auto 0; }
+
+.admin-usuario {
+  align-self: center; font-family: var(--t-mano); font-size: 1.15rem; color: var(--luz);
+  padding-right: 4px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.admin-usuario::before { content: '· '; }
+@media (max-width: 600px) { .admin-usuario { display: none; } }

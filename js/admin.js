@@ -7,7 +7,9 @@
   const CLAVE = 'melange_admin_sesion';
 
   let token = null;          // token de sesión (la contraseña no se guarda)
+  let usuarioActual = '';
   let pwPendiente = null;    // solo en memoria mientras se pide el código MFA
+  let userPendiente = '';
   let actividades = [];
   let editando = null;
   let guardando = false;
@@ -18,6 +20,8 @@
   // ---------- sesión (solo dura mientras la pestaña esté abierta) ----------
   function leerSesion() { try { return sessionStorage.getItem(CLAVE); } catch (e) { return null; } }
   function guardarSesion(t) { try { sessionStorage.setItem(CLAVE, t); } catch (e) { /* sin storage */ } }
+  function leerUsuarioGuardado() { try { return localStorage.getItem('melange_admin_usuario') || ''; } catch (e) { return ''; } }
+  function guardarUsuario(u) { try { localStorage.setItem('melange_admin_usuario', u); } catch (e) { /* sin storage */ } }
   function borrarSesion() { try { sessionStorage.removeItem(CLAVE); } catch (e) { /* sin storage */ } }
 
   // ---------- UI básica ----------
@@ -47,16 +51,20 @@
     e.hidden = !msg;
     $('login-pass').value = '';
     pwPendiente = null;
+    userPendiente = '';
     pasoCodigo(false);
   }
 
   // Segundo paso del ingreso: el código de 6 dígitos de la app autenticadora.
   function pasoCodigo(on) {
+    $('lbl-user').hidden = on;
     $('lbl-pass').hidden = on;
     $('lbl-code').hidden = !on;
     $('btn-login-volver').hidden = !on;
     $('login-code').value = '';
-    (on ? $('login-code') : $('login-pass')).focus();
+    if (on) { $('login-code').focus(); return; }
+    $('login-user').value = $('login-user').value || leerUsuarioGuardado();
+    ($('login-user').value ? $('login-pass') : $('login-user')).focus();
   }
 
   function errorLogin(msg) {
@@ -69,6 +77,7 @@
     // Invalida el token también en el servidor (sin esperar la respuesta).
     if (token) postApi({ action: 'logout', token }).catch(() => {});
     token = null;
+    usuarioActual = '';
     borrarSesion();
     cerrarModal(true);
     cerrarElim(true);
@@ -98,26 +107,30 @@
   $('form-login').addEventListener('submit', async (ev) => {
     ev.preventDefault();
     const enCodigo = !$('lbl-code').hidden;
+    const usuario = enCodigo ? userPendiente : $('login-user').value.trim();
     const pw = enCodigo ? pwPendiente : $('login-pass').value;
     const codigo = enCodigo ? $('login-code').value.trim() : '';
-    if (!pw || (enCodigo && !codigo)) return;
+    if (!usuario || !pw || (enCodigo && !codigo)) return;
     const btn = $('btn-login');
     btn.disabled = true;
     btn.textContent = 'Verificando…';
     try {
-      const r = await postApi({ action: 'login', password: pw, codigo });
+      const r = await postApi({ action: 'login', usuario, password: pw, codigo });
       if (r.ok && r.token) {
         token = r.token;
+        usuarioActual = r.usuario || usuario;
         guardarSesion(token);
+        guardarUsuario(usuarioActual);
         $('login-pass').value = '';
         pwPendiente = null;
         await entrar();
       } else if (r.needsCode) {
-        pwPendiente = pw;                       // la contraseña ya fue correcta; falta el código
+        userPendiente = usuario;
+        pwPendiente = pw;                       // usuario y contraseña ya fueron correctos; falta el código
         pasoCodigo(true);
         errorLogin(r.error || '');
       } else {
-        mostrarLogin(r.error || 'Contraseña incorrecta.');
+        mostrarLogin(r.error || 'Usuario o contraseña incorrectos.');
       }
     } catch (err) {
       errorLogin('No se pudo conectar. Intenta de nuevo.');
@@ -153,6 +166,9 @@
   async function entrar() {
     $('vista-login').hidden = true;
     $('vista-panel').hidden = false;
+    const chip = $('admin-usuario');
+    chip.textContent = usuarioActual;
+    chip.hidden = !usuarioActual;
     cambiarTab('actividades');
     await cargarActividades();
   }
@@ -696,7 +712,7 @@
     try {
       token = guardada;
       const r = await postApi({ action: 'sesion', token });
-      if (r && r.ok) await entrar();
+      if (r && r.ok) { usuarioActual = r.usuario || ''; await entrar(); }
       else { token = null; borrarSesion(); mostrarLogin(); }
     } catch (err) {
       mostrarLogin('No se pudo conectar. Intenta de nuevo.');
