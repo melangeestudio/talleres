@@ -53,7 +53,7 @@
   const mesTitulo = (idx) => `${MESES[idx % 12]} ${Math.floor(idx / 12)}`;
 
   // Ilustración de la marca para cada familia de taller.
-  const ILUSTRACION = { modelado: 'jarron', pintura: 'jarron-lila', creativo: 'jarron-chocolate' };
+  const ILUSTRACION = { modelado: 'jarron', pintura: 'jarron-lila', creativo: 'jarron' };
 
   function textoCupos(disp) {
     if (disp <= 0) return 'Agotado';
