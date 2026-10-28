@@ -126,7 +126,12 @@ a { color: var(--azurita); }
   font-size: clamp(3rem, 8.4vw, 6.4rem);
   line-height: .9; letter-spacing: -.025em;
 }
-.lead { margin: 20px 0 0; max-width: 430px; font-size: 1.06rem; color: #E9EEFF; }
+.hero-mano {
+  margin: 14px 0 0; max-width: 480px;
+  font-family: var(--t-mano); font-size: clamp(1.4rem, 3vw, 2rem);
+  color: var(--liquen); line-height: 1.15;
+}
+.lead { margin: 18px 0 0; max-width: 430px; font-size: 1.06rem; color: #E9EEFF; }
 .hero-flecha {
   display: inline-block; margin-top: 22px;
   font-family: var(--t-mano); font-size: 1.35rem; color: var(--luz); text-decoration: none;
