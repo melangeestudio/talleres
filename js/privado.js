@@ -6,7 +6,7 @@
   const { MESES, esc, formatHora, formatMonto, personasTxt, postApi, partesFecha } = window.Mel;
   const $ = (id) => document.getElementById(id);
   const DIAS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-  let ETIQUETA = { modelado: 'Modelado', pintura: 'Pintura de taza', tile: 'Pintura de tile' };
+  let ETIQUETA = { modelado: 'Modelado', pintura: 'Pintura de taza', tile: 'Pintura de mosaico' };
 
   let info = null;      // info.privado
   let mesCal = 0;       // año * 12 + mes
