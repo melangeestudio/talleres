@@ -287,12 +287,16 @@
 
   // Nombre interno que se guarda en el Sheet: "Hacer-Noviembre-2".
   // Al editar se conserva si no cambió ni el tipo ni el mes.
+  // Talleres creativos: "Otros-Taller de llaveritos-Noviembre-1" (el nombre propio va en medio).
+  function tituloLimpio() { return $('f-titulo').value.replace(/-/g, ' ').replace(/\s+/g, ' ').trim(); }
   function nombreFinal(tipo, fechaISO) {
-    if (editando && tipoDe(editando.nombre) === tipo &&
+    const titulo = tipo === 'Otros' ? tituloLimpio() : '';
+    const mesTxt = MESES[Number(fechaISO.slice(5, 7)) - 1];
+    if (editando && tipoDe(editando.nombre) === tipo && !titulo &&
         String(editando.fechaISO).slice(5, 7) === fechaISO.slice(5, 7)) {
       return editando.nombre;
     }
-    const base = `${tipo}-${MESES[Number(fechaISO.slice(5, 7)) - 1]}-`;
+    const base = `${tipo}-${titulo ? titulo + '-' : ''}${mesTxt}-`;
     const usados = actividades
       .filter((a) => !editando || a.id !== editando.id)
       .filter((a) => String(a.nombre).startsWith(base))
@@ -302,6 +306,7 @@
   }
 
   function actualizarNombreInterno() {
+    $('f-titulo-wrap').hidden = $('f-tipo').value !== 'Otros';
     const fecha = $('f-fecha').value;
     $('f-nombre-interno').textContent = fecha
       ? `Se guardará como: ${nombreFinal($('f-tipo').value, fecha)}`
@@ -317,6 +322,7 @@
     $('modal-titulo').textContent = a ? 'Editar actividad' : 'Nueva actividad';
     if (a) {
       $('f-tipo').value = tipoDe(a.nombre);
+      $('f-titulo').value = window.Mel.nombrePropio(a.nombre);
       $('f-fecha').value = a.fechaISO;
       $('f-hora').value = hora24(a.hora);
       $('f-cupos').value = a.cuposTotales;
@@ -353,6 +359,7 @@
   });
   $('f-tipo').addEventListener('change', actualizarNombreInterno);
   $('f-fecha').addEventListener('input', actualizarNombreInterno);
+  $('f-titulo').addEventListener('input', actualizarNombreInterno);
 
   $('form-act').addEventListener('submit', async (ev) => {
     ev.preventDefault();
@@ -365,6 +372,7 @@
     const precio = Number($('f-precio').value);
     const descripcion = $('f-desc').value.trim();
 
+    if (tipo === 'Otros' && !tituloLimpio()) return errorForm('Escribe el nombre del taller (ej.: Taller de llaveritos).');
     if (!fecha || !hora) return errorForm('Indica la fecha y la hora.');
     if (!Number.isInteger(cupos) || cupos < 1) return errorForm('Los cupos deben ser un número entero mayor a 0.');
     if ($('f-precio').value === '' || !(precio >= 0)) return errorForm('Indica un precio válido.');

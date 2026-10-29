@@ -22,7 +22,14 @@ window.Mel = (function () {
   }
 
   // "Hacer-Octubre-3" -> "Modelado" (ver CATEGORIAS en config.js)
+  // Talleres creativos con nombre propio: "Otros-Taller de llaveritos-Noviembre-1" -> "Taller de llaveritos".
+  function nombrePropio(nombre) {
+    const p = String(nombre || '').split('-');
+    return p[0].trim().toLowerCase() === 'otros' && p.length >= 4 ? p.slice(1, -2).join('-').trim() : '';
+  }
   function nombreVisible(nombre) {
+    const propio = nombrePropio(nombre);
+    if (propio) return propio;
     const prefijo = String(nombre || '').split('-')[0].trim();
     return CATEGORIAS[prefijo.toLowerCase()] || prefijo || String(nombre || '');
   }
@@ -30,12 +37,14 @@ window.Mel = (function () {
   // Título largo: "Modelado" -> "Taller de modelado".
   // Si el nombre ya empieza con "Taller" (ej. "Taller creativo") se deja igual.
   function tituloTaller(nombre) {
+    if (nombrePropio(nombre)) return nombrePropio(nombre);
     const n = nombreVisible(nombre);
     return /^taller/i.test(n) ? n : `Taller de ${n.toLowerCase()}`;
   }
 
   // Familia visual de cada taller (color e ilustración en el sitio): 'modelado' | 'pintura' | 'creativo'.
   function categoria(nombre) {
+    if (nombrePropio(nombre)) return 'creativo';
     const n = nombreVisible(nombre).toLowerCase();
     if (n.startsWith('modelado')) return 'modelado';
     if (n.startsWith('pintura')) return 'pintura';
@@ -131,5 +140,5 @@ window.Mel = (function () {
       </div></div>`;
   }
 
-  return { tipoInfoHTML, cargarInfo, MESES, esc, hoyISO, nombreVisible, tituloTaller, categoria, partesFecha, formatFecha, hora24, formatHora, formatMonto, personasTxt, postApi, getApi };
+  return { tipoInfoHTML, cargarInfo, MESES, esc, hoyISO, nombrePropio, nombreVisible, tituloTaller, categoria, partesFecha, formatFecha, hora24, formatHora, formatMonto, personasTxt, postApi, getApi };
 })();
