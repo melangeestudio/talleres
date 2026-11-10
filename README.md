@@ -74,6 +74,10 @@ Para cambiar el backend (correos, Calendar, duración de eventos, personas máxi
 
 Están al final de `index.html`, en `<section class="faq">`: cada pregunta es un `<details class="faq-item">` con su `<summary>` (pregunta) y un `<div class="faq-resp">` (respuesta). Para editar, cambiar el texto; para agregar, copiar un bloque `<details>` completo; para quitar, borrarlo. Es un acordeón nativo (sin JavaScript). Si se cambia el CSS o JS, subir el número de `?v=` en los enlaces de `index.html` y `admin.html` para evitar caché.
 
+## Consultas del público
+
+"¿Tienes dudas? Escríbenos" (enlace en los formularios de inscripción y taller privado, y al final de la FAQ) abre un formulario corto (`js/contacto.js`). Envía un correo a `NOTIFY_EMAILS` con la pregunta, y al responderlo le escriben directo a la persona. No guarda nada en el Sheet, no descuenta cupos y no cuenta como inscripción. Límite: 3 mensajes por hora por correo y 30 por hora en total; campo trampa anti-bots.
+
 ## Respaldo y limpieza
 
 Se ejecutan a mano desde el editor de Apps Script (no requieren nuevo despliegue):

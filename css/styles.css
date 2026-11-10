@@ -583,7 +583,7 @@ form textarea { resize: vertical; min-height: 70px; }
 .mc-dia.lleno { text-decoration: line-through; background: rgba(239, 105, 67, .12); }
 .fecha-elegida { margin: 8px 0 0; color: var(--suave); font-size: .9rem; }
 .fecha-elegida.elegida { font-family: var(--t-mano); font-size: 1.2rem; color: var(--fuego); }
-#priv-form .btn, #priv-ok-vista .btn { width: 100%; }
+#priv-form .btn, #priv-ok-vista .btn, #ct-form .btn, #ct-ok-vista .btn { width: 100%; }
 #priv-ok-vista { text-align: center; }
 #priv-ok-vista p { color: var(--suave); }
 #priv-ok-vista #priv-ok-detalle { color: var(--tinta); }
@@ -650,3 +650,13 @@ form textarea { resize: vertical; min-height: 70px; }
   font-family: var(--t-titulo); font-weight: 700; font-size: 1rem;
 }
 .btn-cancelar:hover { border-color: var(--azurita); }
+
+/* ---------- "¿Tienes dudas? Escríbenos" ---------- */
+.dudas { margin: -8px 0 16px; font-size: .9rem; font-weight: 500; color: var(--suave); }
+.link-dudas {
+  background: none; border: 0; padding: 0; cursor: pointer; font: inherit; font-weight: 700;
+  color: var(--azurita); text-decoration: underline; text-underline-offset: 3px;
+}
+.link-dudas:hover { color: var(--fuego); }
+.faq-mas { max-width: 880px; margin: 18px auto 0; text-align: center; font-weight: 500; color: var(--suave); }
+#modal-contacto { z-index: 60; }
