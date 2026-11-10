@@ -139,11 +139,9 @@ a { color: var(--azurita); }
 .hero-flecha span { display: inline-block; transition: transform .2s; }
 .hero-flecha:hover span { transform: translateY(4px); }
 
-.hero-collage { position: relative; height: 380px; }
-.hero-collage img { position: absolute; display: block; }
-.c-estrella { width: 300px; right: 2%; top: 4%; opacity: .95; }
-.c-flor { width: 118px; left: 4%; top: 2%; transform: rotate(-12deg); }
-.c-taza { width: 150px; left: 10%; bottom: 4%; transform: rotate(6deg); }
+.hero-collage { display: flex; justify-content: center; align-items: center; }
+.hero-collage img { display: block; }
+.c-flor { width: 210px; transform: rotate(-12deg); }
 
 /* Sticker: ilustración sobre un recorte color luz */
 .sticker {
@@ -492,10 +490,9 @@ form input[type=file] { padding: 9px 10px; background: var(--papel); }
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .hero-cuerpo { grid-template-columns: 1fr; padding-top: 30px; gap: 4px; }
-  .hero-collage { height: 210px; order: -1; margin: 0 -8px; }
-  .c-estrella { width: 190px; right: 4%; top: 0; }
-  .c-flor { width: 78px; left: 2%; top: 10px; }
-  .c-taza { width: 98px; left: 22%; bottom: 6px; }
+  .hero-cuerpo { position: relative; }
+  .hero-collage { position: absolute; top: 34px; right: 4px; }
+  .c-flor { width: 92px; }
   .pasos ol { grid-template-columns: 1fr; gap: 12px; }
 }
 @media (max-width: 600px) {
@@ -504,7 +501,6 @@ form input[type=file] { padding: 9px 10px; background: var(--papel); }
   .hero-ig svg { width: 26px; height: 26px; }
   .marca-nombre { font-size: 1.45rem; }
   .marca-tacita { width: 36px; }
-  .c-estrella { right: 30%; }
   .wrap { padding: 8px 16px 60px; }
   .seccion-head { margin: 18px 0 20px; }
   .section-mano { display: block; margin: 6px 0 0; transform: rotate(-3deg); }
