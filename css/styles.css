@@ -153,7 +153,6 @@ a { color: var(--azurita); }
   box-shadow: 0 2px 0 rgba(28, 46, 102, .18);
 }
 .sticker img { display: block; width: 78%; height: auto; position: static; }
-.c-mochi { position: absolute; width: 190px; height: 186px; right: 14%; bottom: 0; transform: rotate(-4deg); }
 
 /* ---------- Contenido ---------- */
 .wrap { max-width: 1100px; margin: 0 auto; padding: 18px 24px 72px; }
@@ -497,7 +496,6 @@ form input[type=file] { padding: 9px 10px; background: var(--papel); }
   .c-estrella { width: 190px; right: 4%; top: 0; }
   .c-flor { width: 78px; left: 2%; top: 10px; }
   .c-taza { width: 98px; left: 22%; bottom: 6px; }
-  .c-mochi { width: 132px; height: 128px; right: 30%; bottom: 0; }
   .pasos ol { grid-template-columns: 1fr; gap: 12px; }
 }
 @media (max-width: 600px) {
@@ -506,7 +504,6 @@ form input[type=file] { padding: 9px 10px; background: var(--papel); }
   .hero-ig svg { width: 26px; height: 26px; }
   .marca-nombre { font-size: 1.45rem; }
   .marca-tacita { width: 36px; }
-  .c-mochi { right: 4%; }
   .c-estrella { right: 30%; }
   .wrap { padding: 8px 16px 60px; }
   .seccion-head { margin: 18px 0 20px; }
