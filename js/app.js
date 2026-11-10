@@ -55,12 +55,6 @@
   // Ilustración de la marca para cada familia de taller.
   const ILUSTRACION = { modelado: 'jarron', pintura: 'jarron-lila', creativo: 'jarron-luz' };
 
-  function textoCupos(disp) {
-    if (disp <= 0) return 'Agotado';
-    if (disp === 1) return '¡Queda 1 cupo!';
-    if (disp <= 3) return `¡Quedan ${disp} cupos!`;
-    return `${disp} cupos libres`;
-  }
 
   // "Viernes 6 de noviembre" (el año ya está en el título del mes y en el sello)
   function fechaCorta(a, f) {
@@ -70,7 +64,6 @@
 
   function cardHTML(a) {
     const disp = Number(a.cuposDisponibles);
-    const claseCupo = disp <= 0 ? 'agotado' : disp <= 3 ? 'pocos' : '';
     const cat = categoria(a.nombre);
     const f = partesFecha(a.fechaISO);
     const sello = f ? `
@@ -90,7 +83,7 @@
           ${a.descripcion ? `<p class="desc">${esc(a.descripcion)}</p>` : ''}
           <div class="meta">
             <span class="precio">${esc(MONEDA)}${esc(formatMonto(a.precio))} <small class="pp">p/p</small></span>
-            <span class="cupos ${claseCupo}">${textoCupos(disp)}</span>
+            ${disp <= 0 ? '<span class="cupos agotado">Agotado</span>' : ''}
           </div>
           <button class="btn" data-id="${esc(a.id)}" ${disp <= 0 ? 'disabled' : ''}>
             ${disp <= 0 ? 'Sin cupos' : 'Inscribirme'}
@@ -101,8 +94,7 @@
 
   function chipHTML(a) {
     const disp = Number(a.cuposDisponibles);
-    const cupos = disp <= 0 ? 'Agotado' : disp === 1 ? '1 cupo' : `${disp} cupos`;
-    const info = `${tituloTaller(a.nombre)} · ${formatHora(a.hora)} · ${MONEDA}${formatMonto(a.precio)} p/p · ${cupos}`;
+    const info = `${tituloTaller(a.nombre)} · ${formatHora(a.hora)} · ${MONEDA}${formatMonto(a.precio)} p/p${disp <= 0 ? ' · Agotado' : ''}`;
     return `<button type="button" class="chip cat-${categoria(a.nombre)}${disp <= 0 ? ' agotado' : ''}" data-id="${esc(a.id)}"
       title="${esc(info)}" ${disp <= 0 ? 'disabled' : ''}><span class="chip-hora">${esc(formatHora(a.hora))}</span> ${esc(nombreVisible(a.nombre))}</button>`;
   }
@@ -226,8 +218,7 @@
   let infoMie = null;
 
   function opcionTipoTxt(t) {
-    const cupos = t.cuposDisponibles <= 0 ? 'agotado' : t.cuposDisponibles === 1 ? '1 cupo' : `${t.cuposDisponibles} cupos`;
-    return `${t.etiqueta} · ${MONEDA}${formatMonto(t.precio)} p/p · ${cupos}`;
+    return `${t.etiqueta} · ${MONEDA}${formatMonto(t.precio)} p/p${t.cuposDisponibles <= 0 ? ' · agotado' : ''}`;
   }
 
   function fechaMieTxt(f) {
