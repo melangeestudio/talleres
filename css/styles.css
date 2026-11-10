@@ -141,7 +141,7 @@ a { color: var(--azurita); }
 
 .hero-collage { display: flex; justify-content: center; align-items: center; }
 .hero-collage img { display: block; }
-.c-flor { width: 210px; transform: rotate(-12deg); }
+.c-estrella { width: 250px; opacity: .95; }
 
 /* Sticker: ilustración sobre un recorte color luz */
 .sticker {
@@ -492,7 +492,7 @@ form input[type=file] { padding: 9px 10px; background: var(--papel); }
   .hero-cuerpo { grid-template-columns: 1fr; padding-top: 30px; gap: 4px; }
   .hero-cuerpo { position: relative; }
   .hero-collage { position: absolute; top: 34px; right: 4px; }
-  .c-flor { width: 92px; }
+  .c-estrella { width: 104px; }
   .pasos ol { grid-template-columns: 1fr; gap: 12px; }
 }
 @media (max-width: 600px) {
